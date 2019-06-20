@@ -22,6 +22,14 @@ function init_enemy_types()
       maxspeed = 6.5 ,
       pattern = follow_player,
       color = 8
+    },
+    {
+      life = 3,
+      speed = 6 ,
+      minspeed = 5 ,
+      maxspeed = 7 ,
+      pattern = follow_player,
+      color = 8
     }
   }
 

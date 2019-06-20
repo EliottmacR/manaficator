@@ -184,7 +184,7 @@ function update_lvl_up()
     local xp = p.pos.x + p.w/2
     local yp = p.pos.y + p.h/2
     
-    if dist(xp - x, yp - y) < p.w * 1.5 then
+    if dist(xp - x, yp - y) < p.w * 1.5 and btnp(9) then
       log("level ".. level .. " in tree " .. i .. " named " .. sk_tree_txt[i][level])
       time_leveled_up = time_leveled_up + 1
       sk_tree[i][level] = 1
@@ -195,7 +195,7 @@ function update_lvl_up()
 end
 
 function draw_lvl_up()
-  use_font("big")
+  use_font("big")  
   local ct = count(lvl_up)  
   local ci = 0 
   for i, level in pairs(lvl_up) do
@@ -205,10 +205,15 @@ function draw_lvl_up()
     local x = ww/2 + cos(ci/ct - 1/4) * ww/4 
     local y = hh/2 + sin(ci/ct - 1/4) * ww/4 + 30
     
+    local xp = p.pos.x + p.w/2
+    local yp = p.pos.y + p.h/2
     circfill(x, y, ww/20, _colors.black)
     if dist(xp - x, yp - y) < p.w * 1.5 then    
       circfill(x, y - 2 + sin_b, ww/20 - sin_b*6, _colors.light_purple)
-      print("Press 'f' to Level up", xp , yp, _colors.black)
+      local str = "Press 'f' to level up"
+      use_font("log")
+      shaded_cool_print(str, xp - str_px_width(str)/2 , yp + str_px_height(str) + 4 + sin_b * 3, _colors.black)
+        use_font("big")
       
     else
       circfill(x, y - 2 + sin_b, ww/20 - sin_b*6, _colors.light_pink )

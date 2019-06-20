@@ -31,7 +31,7 @@ function draw_hud()
     rectfill(0, 0, hud_w, hud_h, _colors.dark_red)
     rectfill(border_w, border_h, hud_w - border_w, hud_h - border_h, _colors.black)
     
-    draw_bonuses()  
+    -- draw_bonuses()  
   target()  
     
   spr_sheet(hud.surface, hud.x, hud.y + sin_b * 3)
