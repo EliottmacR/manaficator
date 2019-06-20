@@ -206,9 +206,9 @@ function draw_lvl_up()
     local y = hh/2 + sin(ci/ct - 1/4) * ww/4 + 30
     
     circfill(x, y, ww/20, _colors.black)
-    if (dist(xp - x, yp - y) < p.w * 1.5) then    
+    if dist(xp - x, yp - y) < p.w * 1.5) then    
       circfill(x, y - 2 + sin_b, ww/20 - sin_b*6, _colors.light_purple)
-      print("Press 'f' to Level up" xp , yp, _colors.black)
+      print("Press 'f' to Level up", xp , yp, _colors.black)
       
     else
       circfill(x, y - 2 + sin_b, ww/20 - sin_b*6, _colors.light_pink )
