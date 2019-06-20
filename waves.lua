@@ -13,18 +13,14 @@ function init_waves()
   waves = {
     --[enemy_type] = remaining
     { -- 1
-      [1] = 1,
+      [1] = 0,
       [2] = 0
     }
   }
-  -- for i = 1, 10 do 
-    -- waves[i] = { 5 + i * (2 - ceil(i/5)), i * 2}
+  for i = 1, 10 do 
+    waves[i] = { 5 + i * (2 - ceil(i/5)), i * 2}
   
-  -- end
-  -- for i = 1, 10 do 
-    -- waves[i] = { 5 + i * (2 - ceil(i/5)), i * 2}
-  
-  -- end
+  end
   
   spawning_enemies = false
   current_wave = 0
