@@ -45,9 +45,10 @@ function init_game()
   register_btn(9, 0, input_id("keyboard", "f"))
   register_btn(10, 0, input_id("keyboard", "space"))
   
-  init_sk_tree()
+  -- init_sk_tree()
   init_hud(dt)
   init_pool(dt)
+  init_sk_tree()
   
   
 end

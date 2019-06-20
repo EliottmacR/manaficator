@@ -3,7 +3,7 @@ bullets = {}
 count_bullets = 0
 
 
-function init_bullet(from, x, y, angle, spd, size, life, param)
+function init_bullet(from, x, y, angle, spd, size, life, speed_loss, param)
   local speed = spd or 10
   b = {  
     from = from,
@@ -25,7 +25,7 @@ function init_bullet(from, x, y, angle, spd, size, life, param)
     ricochet = 0,
     last_hit = nil,
     damage = 1 + (bonuses.damage or 0),
-    laser_length = 60 * bonuses.b_size_mult
+    speed_loss = speed_loss
   }
 
   param = param or {}  
@@ -75,7 +75,7 @@ end
 
 function update_vec_bullet(b, dt) 
   if not b then return end
-  
+  vanilla_update_vector(b)
   local parameters = { bullet = b}
   for ind, func_id in pairs(on_b_v_update_skills) do
     if p.skills[func_id] then 
@@ -85,7 +85,8 @@ function update_vec_bullet(b, dt)
   
 end
 
-function update_vector(b)
+function vanilla_update_vector(b)
+  b.speed = b.speed  * b.speed_loss
   b.v.x = cos(b.angle) * b.speed * (b.speed_mult or 1)
   b.v.y = sin(b.angle) * b.speed * (b.speed_mult or 1)
 end

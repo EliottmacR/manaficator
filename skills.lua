@@ -12,7 +12,8 @@ skills = {}
 on_b_v_update_skills = {
   3,
   4,
-  5
+  5,
+  7
 }
 on_b_col_enemy_skills = {
   1,
@@ -52,18 +53,16 @@ function init_skills()
     auto_aim,     
     dash,   
     rebound,      
-    explosions       
+    explosions  
   }
 
   burning_time = 1  
   electrifying_time = 1
   
   electrify_spd_mult = .5  
-  
 end
 
 function add_skill(id)
-  log(id)
   if not p.skills[id] then
     p.skills[id] = true
   end
@@ -90,13 +89,13 @@ function auto_aim(parameters)
     if (b.angle < angle_enemy) then b.angle = b.angle - step else b.angle = b.angle + step end
   end
   b.angle = ((b.angle % 1) + 1) % 1  
-  update_vector(b)    
+  -- vanilla_update_vector(b)    
 end
 
 function step_movement(parameters)
   local b = parameters.bullet
   b.speed_mult = abs(sin( b.life / b.m_life))
-  update_vector(b)
+  -- update_vector(b)
 end
 
 function fire_aspect(parameters)

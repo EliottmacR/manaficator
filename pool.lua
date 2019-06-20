@@ -147,11 +147,11 @@ end
 function pick_levels()
   -- will give first locked skill on the 3 trees  
   local levels = {}  
-  for tree_id = 1, 3 do   
+  for tree_id = 1, count(sk_tree) do   
     local i = 0  
     repeat
       i = i + 1
-    until sk_tree[tree_id][i] == 0 or i > count(sk_tree[tree_id])
+    until (sk_tree[tree_id][i] and sk_tree[tree_id][i] == 0) or i > count(sk_tree[tree_id])
     log(tree_id .. ":" .. i)
     if i <= count(sk_tree[tree_id]) then
       levels[tree_id] = i        

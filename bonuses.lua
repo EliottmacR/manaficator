@@ -57,11 +57,12 @@ function init_sk_tree()
   sk_tree = {
     -- { [branch][level] : is_activated 
     {0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0}
+    -- {0, 0, 0, 0, 0, 0},
+    -- {0, 0, 0, 0, 0, 0}
     -- {1, 1, 1, 1, 1, 0},
-    -- {1, 1, 1, 1, 1, 0},
-    -- {1, 1, 0, 0, 0, 0}
+    {1, 1, 1, 1, 1, 1},
+    {1, 1, 0, 0, 0, 0}
+    -- {0, 0, 0, 0, 0, 0}
   }
   sk_tree_txt = {
     -- { [branch][level] : is_activated 
@@ -75,6 +76,11 @@ function init_sk_tree()
     {range_p,      firer_p, dash_,    firer_p,      range_p, explosion}
   }
   
+  for branch_id, branch in pairs(sk_tree) do
+    for id, func in pairs(branch) do
+      if sk_tree[branch_id][id] == 1 then sk_tree_func[branch_id][id]() end
+    end
+  end  
 end
 
 function speed_p() bonuses.b_speed_mult   = (bonuses.b_speed_mult   or 1) * 1.12 end
@@ -87,7 +93,7 @@ function fire()         add_skill(1)     end
 function electricity()  add_skill(2)     end 
 
 function auto_a()       add_skill(3)     end  -- auto aim 
-function dash_()        add_skill(4) here()     end 
+function dash_()        add_skill(4)     end 
 function more_bullets() 
   p.shoot_times = p.shoot_times + 1 
   fire_mods[p.fire_mod].fire_rate = fire_mods[p.fire_mod].fire_rate * 1.8
@@ -95,11 +101,13 @@ end
 
 function rebounds()     add_skill(5) end
 function shotgun()      p.shoot_times = p.shoot_times + 3 
-                        p.dispersion = p.dispersion * 6  
+                        p.dispersion = p.dispersion * 3  
                         p.b_speed_diff = .5
-                        fire_mods[p.fire_mod].b_speed = fire_mods[p.fire_mod].b_speed / 2 
+                        fire_mods[p.fire_mod].b_speed = fire_mods[p.fire_mod].b_speed * 2 
                         fire_mods[p.fire_mod].b_life = fire_mods[p.fire_mod].b_life * 3/4
                         fire_mods[p.fire_mod].fire_rate = fire_mods[p.fire_mod].fire_rate * 2.5
+                        fire_mods[p.fire_mod].speed_loss = .85
+                        
 end
 function explosion()    add_skill(6) end
 

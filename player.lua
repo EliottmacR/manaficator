@@ -13,29 +13,30 @@ function init_fire_mods()
     { name = "basic",
       id = 1,
       start_d = 16,
-      fire_rate = .25,
+      fire_rate  = .25,
       b_size = 10,
       b_speed = 10,
       b_life = .8 ,
-      b_rnd = .04} ,
+      b_rnd = .04,
+      speed_loss = .95} ,
       
-    { name = "laser",
-      id = 2,
-      start_d = 0,
-      fire_rate = 0,
-      b_size = 1,
-      b_speed = 30,
-      b_life = .6 ,
-      b_rnd = .04}  ,
+    -- { name = "laser",
+      -- id = 2,
+      -- start_d = 0,
+      -- fire_rate = 0,
+      -- b_size = 1,
+      -- b_speed = 30,
+      -- b_life = .6 ,
+      -- b_rnd = .04}  ,
       
-    { name = "boulder",
-      id = 3,
-      start_d = 16,
-      fire_rate = .2,
-      b_size = 15,
-      b_speed = 10,
-      b_life = .6 ,
-      b_rnd = .04}  
+    -- { name = "boulder",
+      -- id = 3,
+      -- start_d = 16,
+      -- fire_rate = .2,
+      -- b_size = 15,
+      -- b_speed = 10,
+      -- b_life = .6 ,
+      -- b_rnd = .04}  
   }
 end
 
@@ -62,9 +63,6 @@ function init_player()
     fire_cooldown = 0,
     dash_cooldown = 0   
   }  
-  -- add_skill(1)
-  -- add_skill(1)
-  
 end
 
 function update_player(dt)
@@ -139,7 +137,9 @@ function single_bullet(angle, fire_mod, param)
                 angle - f.b_rnd/2 + rnd(f.b_rnd), 
                 f.b_speed * bonuses.b_speed_mult * ( 1 - p.b_speed_diff + rnd(p.b_speed_diff * 2)) ,
                 f.b_size  * bonuses.b_size_mult, 
-                f.b_life  * bonuses.b_range_mult, param )
+                f.b_life  * bonuses.b_range_mult,
+                f.speed_loss,
+                param )
 end
 
 function cap_speed_player()
@@ -166,8 +166,9 @@ function update_pos_player()
 end
 
 function draw_player()
-  if p.dash_cooldown + dt()*10 > 0 and p.dash_cooldown < 0  then
-    rectfill(p.pos.x - abs(p.dash_cooldown) * 10  , p.pos.y - abs(p.dash_cooldown) * 10, p.pos.x + p.w + abs(p.dash_cooldown) * 10, p.pos.y + p.h + abs(p.dash_cooldown) * 10, _colors.white)
+  -- if p.dash_cooldown + dt()*10 > 0 and p.dash_cooldown < 0  then
+  if p.dash_cooldown > 0 then
+    rectfill(p.pos.x - abs(p.dash_cooldown ) * 10  , p.pos.y - abs(p.dash_cooldown) * 10, p.pos.x + p.w + abs(p.dash_cooldown) * 10, p.pos.y + p.h + abs(p.dash_cooldown) * 10, _colors.white)
   end
   rectfill(p.pos.x, p.pos.y, p.pos.x + p.w, p.pos.y + p.h, _colors.orange)
   
