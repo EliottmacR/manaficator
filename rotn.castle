@@ -2,4 +2,5 @@ main: main.lua
 title: Manaficator
 owner: spaceling
 dimensions: full
+description: Combine skills and create spells to vanquish scientists and conquere the leaderboard.
 

@@ -59,7 +59,8 @@ function init_player()
     dispersion = 1/12/2,
     b_speed_diff = 0,
     fire_mod = 1,
-    fire_cooldown = 0    
+    fire_cooldown = 0,
+    dash_cooldown = 0   
   }  
   -- add_skill(1)
   -- add_skill(1)
@@ -68,8 +69,14 @@ end
 
 function update_player(dt)
   
+  -- if btnp(1) then p.skills[4] = true end
+  
   local mx = 7 * dt * 10
   p.fire_cooldown = p.fire_cooldown - dt
+
+  if p.skills[4] then
+    p.dash_cooldown = p.dash_cooldown - dt
+  end
   -- 4 5 6 7
   -- z q s d
   if btn(4) then
@@ -82,6 +89,14 @@ function update_player(dt)
     p.v.x = p.v.x - mx 
   elseif btn(7) then
     p.v.x = p.v.x + mx
+  end
+  
+  if btnp(10) and p.dash_cooldown < 0 then 
+    p.dash_cooldown = .6
+    local max_speed = 10 
+    local angle = atan2(p.v.x, p.v.y)-- + .5
+    p.v.x = p.v.x + 50 * cos(angle)
+    p.v.y = p.v.y + 50 * sin(angle)
   end
   
   p.v.x = p.v.x * (1 - dt * 6)
@@ -131,8 +146,8 @@ function cap_speed_player()
   speed = dist(p.v.x, p.v.y)  
   local max_speed = 10  
   if speed > max_speed then
-    p.v.x = p.v.x / speed * max_speed
-    p.v.y = p.v.y / speed * max_speed
+    p.v.x = p.v.x / speed * (speed-3)
+    p.v.y = p.v.y / speed * (speed-3)
   end
 end
 
@@ -151,6 +166,11 @@ function update_pos_player()
 end
 
 function draw_player()
+  if p.dash_cooldown + dt()*10 > 0 and p.dash_cooldown < 0  then
+    rectfill(p.pos.x - abs(p.dash_cooldown) * 10  , p.pos.y - abs(p.dash_cooldown) * 10, p.pos.x + p.w + abs(p.dash_cooldown) * 10, p.pos.y + p.h + abs(p.dash_cooldown) * 10, _colors.white)
+  end
+  rectfill(p.pos.x, p.pos.y, p.pos.x + p.w, p.pos.y + p.h, _colors.orange)
+  
   rectfill(p.pos.x, p.pos.y, p.pos.x + p.w, p.pos.y + p.h, _colors.orange)
   local angle = atan2(p.pos.x + p.w/2 - btnv(2), p.pos.y + p.h/2 - btnv(3) + hh*1/3) + .5
   

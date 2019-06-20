@@ -24,6 +24,7 @@ function init_bullet(from, x, y, angle, spd, size, life, param)
     moving = true,
     ricochet = 0,
     last_hit = nil,
+    damage = 1 + (bonuses.damage or 0),
     laser_length = 60 * bonuses.b_size_mult
   }
 
@@ -89,20 +90,18 @@ function update_vector(b)
   b.v.y = sin(b.angle) * b.speed * (b.speed_mult or 1)
 end
 
-function find_closest_enemy(b, le)
+function find_closest_enemy(b)
 
   if count(enemies) < 1 then return end
   local m_dist = nil
   local x, y = 0, 0
 
   for i, e in pairs(enemies) do 
-    if ( le == (e ~= le) ) then
-      local d = dist(e.pos.x - b.pos.x, e.pos.y - b.pos.y)
-      if not m_dist or m_dist > d then 
-        m_dist = d
-        x = e.pos.x
-        y = e.pos.y
-      end  
+    local d = dist(e.pos.x - b.pos.x, e.pos.y - b.pos.y)
+    if not m_dist or m_dist > d then 
+      m_dist = d
+      x = e.pos.x
+      y = e.pos.y
     end  
   end
   return x, y
@@ -119,44 +118,25 @@ function collision_bullets(entity)
     if bullet_alive(b) and entity.class ~= b.from then
       local parameters = { bullet = b, enemy = e}
       
-      if b.is_laser then
-        if lasers(parameters) then fire_aspect(parameters) end    
-      elseif b.is_boulder then
-        for ind, func_id in pairs(on_b_col_enemy_skills) do
+      if dist(e.pos.x + e.w/2 - b.pos.x, e.pos.y + e.w/2 - b.pos.y) < e.w / 2 + b.r then 
+        local no_skill = true
+        for ind, func_id in pairs(on_b_col_enemy_skills) do          
           if p.skills[func_id] then 
             skills[func_id](parameters) 
-          end 
-        end       
-      else
-        -- vanilla collision detection
-        
-        if dist(e.pos.x + e.w/2 - b.pos.x, e.pos.y + e.w/2 - b.pos.y) < e.w / 2 + b.r then 
-          local no_skill = true
-          for ind, func_id in pairs(on_b_col_enemy_skills) do          
-            if p.skills[func_id] then 
-              skills[func_id](parameters) 
-              no_skill = false
-            end             
-          end   
-          if no_skill then
-            hit_bullet(b)
-            hit_enemy(e)
-          end
-        end      
-      end
-    end
+            no_skill = false
+          end             
+        end   
+        if no_skill then
+          hit_bullet(b)
+          hit_enemy(e, b.damage)
+        end 
+      end 
+    end 
   end
-
 end
 
 function hit_bullet(bullet)
-  -- if bullet.ricochet < 1 then
-    bullet.state = "dying"
-  -- else
-    -- bullet.state = "hit"
-    -- bullet.ricochet = bullet.ricochet - 1
-  -- end
-  -- log(bullet.ricochet)
+  bullet.state = "dying"
 end
 
 function bullet_alive(bullet)

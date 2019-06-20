@@ -63,6 +63,7 @@ function init_skills()
 end
 
 function add_skill(id)
+  log(id)
   if not p.skills[id] then
     p.skills[id] = true
   end
@@ -76,7 +77,9 @@ end
 
 function auto_aim(parameters)  
   local b = parameters.bullet  
-  local x, y = find_closest_enemy(b)  
+  
+  local x, y = find_closest_enemy(b) 
+  -- log(x .. " .. " .. y)
   if not x then return end  
   local angle_enemy = ((atan2(b.pos.x - x, b.pos.y - y ) + .5 % 1) + 1) % 1   
   if (b.angle - angle_enemy == 0) then return end  
@@ -125,18 +128,9 @@ function electricity_aspect(parameters)
   local d = dist(e.pos.x + e.w/2, e.pos.y + e.h/2, b.pos.x, b.pos.y)
   
   if dist(e.pos.x + e.w/2, e.pos.y+ e.h/2, b.pos.x, b.pos.y) <= b.r*1.5 then
-    for ind, e in pairs(enemies) do
-      if b.last_hit == e then return end
-      if dist(e.pos.x + e.w/2, e.pos.y+ e.h/2, b.pos.x, b.pos.y) <= b.r*4 then
-        hit_enemy(e)
-        electrify_enemy(e)
-        e.o_f.x = cos(b.angle) * 5
-        e.o_f.y = sin(b.angle) * 5    
-      end
-    end
-    if not p.skills[6] then
-      hit_bullet(b)
-    end
+    electrify_enemy(e)
+    hit_enemy(e, b.damage)
+    hit_bullet(b)
   end
    
 end
@@ -181,14 +175,12 @@ function explosions(parameters)
   local b = parameters.bullet 
   
   for ind, e in pairs(enemies) do
-    if b.last_hit == e then return end
     if dist(e.pos.x + e.w/2, e.pos.y+ e.h/2, b.pos.x, b.pos.y) <= b.r*4 then
       hit_enemy(e)
       e.o_f.x = cos(b.angle) * 5
       e.o_f.y = sin(b.angle) * 5    
     end
   end
-    
 end
 
 

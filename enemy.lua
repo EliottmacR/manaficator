@@ -174,8 +174,8 @@ function update_enemy(e)
     e.state = "to_die"
   end
 end
-function hit_enemy(e)
-  e.life = e.life - 1
+function hit_enemy(e, life)
+  e.life = e.life - (life or 1)
   e.state = "hurt"
 end
 

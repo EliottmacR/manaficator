@@ -38,21 +38,44 @@ sk_tree = {
   {0, 0, 0, 0, 0, 0}
   -- {1, 1, 1, 1, 1, 0},
   -- {1, 1, 1, 1, 1, 0},
-  -- {0, 0, 0, 0, 0, 0}
+  -- {1, 1, 0, 0, 0, 0}
 }
-
 sk_tree_txt = {
   -- { [branch][level] : is_activated 
   {"Fire Aspect",        "Speed T-1",     "Damage T-1", "Fire Rate T-2", "Speed T-2", "Rebound"},
   {"Electro Aspect",     "Size T-1",      "Auto-Aim",   "Double",        "Size T-2",  "Shotgun"},
   {"Range T-1",          "Fire Rate T-1", "Dash"      , "Fire Rate T-2", "Range T-2", "Explosions"}
 }
-
 sk_tree_func = {
   {fire,         speed_p, damage,   firer_p,      speed_p, rebounds},
   {electricity , size_p,  auto_a,   more_bullets, size_p,  shotgun},
-  {range_p,      firer_p, dash,     firer_p,      range_p, explosion}
+  {range_p,      firer_p, dash_,    firer_p,      range_p, explosion}
 }
+
+function init_sk_tree()
+
+  sk_tree = {
+    -- { [branch][level] : is_activated 
+    {0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0}
+    -- {1, 1, 1, 1, 1, 0},
+    -- {1, 1, 1, 1, 1, 0},
+    -- {1, 1, 0, 0, 0, 0}
+  }
+  sk_tree_txt = {
+    -- { [branch][level] : is_activated 
+    {"Fire Aspect",        "Speed T-1",     "Damage T-1", "Fire Rate T-2", "Speed T-2", "Rebound"},
+    {"Electro Aspect",     "Size T-1",      "Auto-Aim",   "Double",        "Size T-2",  "Shotgun"},
+    {"Range T-1",          "Fire Rate T-1", "Dash"      , "Fire Rate T-2", "Range T-2", "Explosions"}
+  }
+  sk_tree_func = {
+    {fire,         speed_p, dmg_p,   firer_p,      speed_p, rebounds},
+    {electricity , size_p,  auto_a,   more_bullets, size_p,  shotgun},
+    {range_p,      firer_p, dash_,    firer_p,      range_p, explosion}
+  }
+  
+end
 
 function speed_p() bonuses.b_speed_mult   = (bonuses.b_speed_mult   or 1) * 1.12 end
 function size_p()  bonuses.b_size_mult    = (bonuses.b_size_mult    or 1) * 1.2 end
@@ -64,16 +87,19 @@ function fire()         add_skill(1)     end
 function electricity()  add_skill(2)     end 
 
 function auto_a()       add_skill(3)     end  -- auto aim 
-function dash()         add_skill(4)     end 
-function more_bullets() p.shoot_times = p.shoot_times + 1 end
+function dash_()        add_skill(4) here()     end 
+function more_bullets() 
+  p.shoot_times = p.shoot_times + 1 
+  fire_mods[p.fire_mod].fire_rate = fire_mods[p.fire_mod].fire_rate * 1.8
+end
 
 function rebounds()     add_skill(5) end
 function shotgun()      p.shoot_times = p.shoot_times + 3 
-                        p.dispersion = p.dispersion * 3  
+                        p.dispersion = p.dispersion * 6  
                         p.b_speed_diff = .5
                         fire_mods[p.fire_mod].b_speed = fire_mods[p.fire_mod].b_speed / 2 
                         fire_mods[p.fire_mod].b_life = fire_mods[p.fire_mod].b_life * 3/4
-                        fire_mods[p.fire_mod].fire_rate = fire_mods[p.fire_mod].fire_rate * 3/4
+                        fire_mods[p.fire_mod].fire_rate = fire_mods[p.fire_mod].fire_rate * 2.5
 end
 function explosion()    add_skill(6) end
 

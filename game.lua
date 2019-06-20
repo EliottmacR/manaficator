@@ -43,15 +43,12 @@ function init_game()
   end
   register_btn(8, 0, input_id("keyboard", "p"))
   register_btn(9, 0, input_id("keyboard", "f"))
+  register_btn(10, 0, input_id("keyboard", "space"))
   
+  init_sk_tree()
   init_hud(dt)
   init_pool(dt)
   
-  sk_tree_func = {
-    {fire,         speed_p, damage,   firer_p,      speed_p, rebounds},
-    {electricity , size_p,  auto_a,   more_bullets, size_p,  shotgun},
-    {range_p,      firer_p, dash,     firer_p,      range_p, explosion}
-  }
   
 end
   
