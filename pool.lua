@@ -206,7 +206,13 @@ function draw_lvl_up()
     local y = hh/2 + sin(ci/ct - 1/4) * ww/4 + 30
     
     circfill(x, y, ww/20, _colors.black)
-    circfill(x, y - 2 + sin_b, ww/20 - sin_b*6, _colors.light_pink)
+    if (dist(xp - x, yp - y) < p.w * 1.5) then    
+      circfill(x, y - 2 + sin_b, ww/20 - sin_b*6, _colors.light_purple)
+      print("Press 'f' to Level up" xp , yp, _colors.black)
+      
+    else
+      circfill(x, y - 2 + sin_b, ww/20 - sin_b*6, _colors.light_pink )
+    end
     color(_colors.black)
     shaded_cool_print(txt, x - str_px_width(txt)/2, y - str_px_height(txt)/2 - 60 + sin_b )
   
