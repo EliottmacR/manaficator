@@ -46,8 +46,8 @@ if CASTLE_PREFETCH then
 })
 end
 
-GW = 800
-GH = 1000
+GW = 700
+GH = 900
 zoom = 3
 
 function love.load()

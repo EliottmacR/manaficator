@@ -13,9 +13,9 @@ function init_fire_mods()
     { name = "basic",
       id = 1,
       start_d = 16,
-      fire_rate  = .25,
+      fire_rate  = .18,
       b_size = 10,
-      b_speed = 10,
+      b_speed = 20,
       b_life = .8 ,
       b_rnd = .04,
       speed_loss = .95} ,
@@ -54,6 +54,8 @@ function init_player()
     w = 16 * 2,
     h = 16 * 2,
     scale_spr = 2,
+    hp = 5,
+    max_hp = 5,
     skills = {},
     shoot = single_bullet,
     shoot_times = 1,
@@ -61,13 +63,15 @@ function init_player()
     b_speed_diff = 0,
     fire_mod = 1,
     fire_cooldown = 0,
-    dash_cooldown = 0   
+    dash_cooldown = 0 , 
+    invicible_cooldown = 0,
+    invicible_time = 1.3   
   }  
 end
 
 function update_player(dt)
   
-  -- if btnp(1) then p.skills[4] = true end
+  if btnp(1) then show_message("ouch") end
   
   local mx = 7 * dt * 10
   p.fire_cooldown = p.fire_cooldown - dt
@@ -75,6 +79,9 @@ function update_player(dt)
   if p.skills[4] then
     p.dash_cooldown = p.dash_cooldown - dt
   end
+  
+  p.invicible_cooldown = p.invicible_cooldown - dt
+  
   -- 4 5 6 7
   -- z q s d
   if btn(4) then
@@ -165,14 +172,30 @@ function update_pos_player()
 
 end
 
+function hit_player()
+  -- log("player hit")
+  if p.invicible_cooldown < 0 then
+    p.invicible_cooldown = p.invicible_time
+    p.hp = p.hp - 1
+    screen_shake()
+  end
+  -- log(p.hp)
+
+end
+
+
 function draw_player()
   -- if p.dash_cooldown + dt()*10 > 0 and p.dash_cooldown < 0  then
-  if p.dash_cooldown > 0 then
-    rectfill(p.pos.x - abs(p.dash_cooldown ) * 10  , p.pos.y - abs(p.dash_cooldown) * 10, p.pos.x + p.w + abs(p.dash_cooldown) * 10, p.pos.y + p.h + abs(p.dash_cooldown) * 10, _colors.white)
-  end
-  rectfill(p.pos.x, p.pos.y, p.pos.x + p.w, p.pos.y + p.h, _colors.orange)
   
-  rectfill(p.pos.x, p.pos.y, p.pos.x + p.w, p.pos.y + p.h, _colors.orange)
+  if p.invicible_cooldown > 0 and ( flr(p.invicible_cooldown * 10) % 2 == 0 ) then
+  else
+    if p.dash_cooldown > 0 then
+      rectfill(p.pos.x - abs(p.dash_cooldown ) * 10  , p.pos.y - abs(p.dash_cooldown) * 10, p.pos.x + p.w + abs(p.dash_cooldown) * 10, p.pos.y + p.h + abs(p.dash_cooldown) * 10, _colors.white)
+    end
+    rectfill(p.pos.x, p.pos.y, p.pos.x + p.w, p.pos.y + p.h, _colors.orange)
+  end
+  
+  -- rectfill(p.pos.x, p.pos.y, p.pos.x + p.w, p.pos.y + p.h, _colors.orange)
   local angle = atan2(p.pos.x + p.w/2 - btnv(2), p.pos.y + p.h/2 - btnv(3) + hh*1/3) + .5
   
   local c = cos(angle)

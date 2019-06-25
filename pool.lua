@@ -11,6 +11,22 @@ h_pool = 0
 b_pool = 0
 local pool_s        = nil
 
+message = ""
+message_timer = 0
+wave_timer = 0
+wave_display_time = 3
+message_time = 3
+
+function show_message(msg)
+  if not msg then return end  
+  message =   msg
+  message_timer = message_time  
+end
+
+function show_wave()
+  wave_timer = wave_display_time  
+end
+
 local player = {}
 
 show_lvl_up = false
@@ -63,6 +79,9 @@ function update_pool(dt)
   update_enemies(dt)
   update_bullets(dt) 
   
+  message_timer = message_timer - dt
+  wave_timer = wave_timer - dt
+  
 end
 
 function add_skill(id)
@@ -86,6 +105,22 @@ function draw_pool()
   draw_player()
   draw_enemies()
   draw_bullets()
+  
+  
+  -- message_timer = message_timer - dt()
+  -- wave_timer = wave_timer - dt()
+  if message_timer > 0 then
+    use_font("big")
+    cool_print(message, w_pool/2 - str_px_width(message)/2, h_pool * 3/4 - str_px_height(message) + sin_b * 5)  
+  end
+  
+  if wave_timer > 0 then
+    use_font("big")
+    local str = "Wave " .. current_wave
+    cool_print(str, w_pool/2- str_px_width(str) / 2, h_pool * 1/4  - str_px_height(str) + sin_b * 5) 
+  
+  
+  end
   
   target()
   
@@ -152,7 +187,7 @@ function pick_levels()
     repeat
       i = i + 1
     until (sk_tree[tree_id][i] and sk_tree[tree_id][i] == 0) or i > count(sk_tree[tree_id])
-    log(tree_id .. ":" .. i)
+    -- log(tree_id .. ":" .. i)
     if i <= count(sk_tree[tree_id]) then
       levels[tree_id] = i        
     end
@@ -162,7 +197,7 @@ function pick_levels()
 end
 
 function pick_distinct_number( count, from, to) -- from and to are included
-  if (to - from + 1) < count then log("oops") return end
+  -- if (to - from + 1) < count then log("oops") return end
   local numbers = {}
   
   for i = from, to do
@@ -178,14 +213,14 @@ function update_lvl_up()
   local ci = 0 
   for i, level in pairs(lvl_up) do
     ci = ci + 1
-    local x = ww/2 + cos(ci/ct - 1/4) * ww/4 
-    local y = hh/2 + sin(ci/ct - 1/4) * ww/4 + 30
+    local x = ww/2 - cos(ci/ct - 1/4) * ww/4 
+    local y = hh/2 - sin(ci/ct - 1/4) * ww/4 - 30
     
     local xp = p.pos.x + p.w/2
     local yp = p.pos.y + p.h/2
     
     if dist(xp - x, yp - y) < p.w * 1.5 and btnp(9) then
-      log("level ".. level .. " in tree " .. i .. " named " .. sk_tree_txt[i][level])
+      -- log("level ".. level .. " in tree " .. i .. " named " .. sk_tree_txt[i][level])
       time_leveled_up = time_leveled_up + 1
       sk_tree[i][level] = 1
       sk_tree_func[i][level]()
@@ -202,8 +237,8 @@ function draw_lvl_up()
     ci = ci + 1
     local txt = sk_tree_txt[i][level] or ""
     
-    local x = ww/2 + cos(ci/ct - 1/4) * ww/4 
-    local y = hh/2 + sin(ci/ct - 1/4) * ww/4 + 30
+    local x = ww/2 - cos(ci/ct - 1/4) * ww/4 
+    local y = hh/2 - sin(ci/ct - 1/4) * ww/4 - 30
     
     local xp = p.pos.x + p.w/2
     local yp = p.pos.y + p.h/2
@@ -219,7 +254,12 @@ function draw_lvl_up()
       circfill(x, y - 2 + sin_b, ww/20 - sin_b*6, _colors.light_pink )
     end
     color(_colors.black)
-    shaded_cool_print(txt, x - str_px_width(txt)/2, y - str_px_height(txt)/2 - 60 + sin_b )
+    shaded_cool_print(txt, x - str_px_width(txt)/2, y - str_px_height(txt)/2 - 60 + sin_b*2 )
+    
+    local I = ""
+    for it = 1, i do I = I .. "I" end
+    
+    shaded_cool_print(I, x - str_px_width(I)/2, y - str_px_height(I)/2 + 60 + sin_b*2, _colors.yellow, _colors.black )
   
   end
 end

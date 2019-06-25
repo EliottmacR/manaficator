@@ -22,7 +22,7 @@ function init_game()
 
   load_font("sugarcoat/TeapotPro.ttf", 64*3/4, "big", true)
   load_font("sugarcoat/TeapotPro.ttf", 64/2, "log", false)
-  
+  hud_png = load_png("hud_png", "hud.png", nil, false)
   -- init_screens()
   
   register_btn(0, 0, input_id("mouse_button", "lb"))
@@ -67,11 +67,9 @@ function draw_game()
   cls(background_clr)
   draw_hud()
   draw_pool()
-  
-  -- draw_mouse()
-  -- if btn(1) then 
-    -- draw_palette()    
-  -- end
+  if p.invicible_cooldown == p.invicible_time then
+    cls(_colors.dark_red)
+  end
 end
 
 

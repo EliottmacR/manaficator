@@ -8,28 +8,33 @@ function init_enemy_types()
   enemy_types = {
   
     {
-      life = 4,
-      speed = 4 ,
-      minspeed = 3 ,
-      maxspeed = 5 ,
-      pattern = follow_player,
-      color = 7
-    },
-    {
       life = 2,
-      speed = 5.5 ,
-      minspeed = 4.5 ,
-      maxspeed = 6.5 ,
-      pattern = follow_player,
-      color = 8
-    },
-    {
-      life = 3,
       speed = 6 ,
       minspeed = 5 ,
       maxspeed = 7 ,
       pattern = follow_player,
+      draw = draw_1,
+      color = 7
+    },
+    {
+      life = 2,
+      speed = 7 ,
+      minspeed = 6 ,
+      maxspeed = 8 ,
+      pattern = follow_player,
+      draw = draw_1,
       color = 8
+    },
+    {
+      life = 1,
+      speed = 7 ,
+      minspeed = 6 ,
+      maxspeed = 8 ,
+      pattern = kamikaze_pattern,
+      draw = draw_kamikaze,
+      blast_radius = 130,
+      explosion_time = .7,
+      color = _colors.dark_purple
     }
   }
 
@@ -57,14 +62,19 @@ function init_enemy(enemy_type)
     speed = e_t.speed,
     minspeed = e_t.minspeed,
     maxspeed = e_t.maxspeed,
+    
     pattern = e_t.pattern,
+    draw = e_t.draw,
+    
     type = enemy_type,
     color = e_t.color,
     last_hit = nil,
-    
     burning = false,
     electrified = false,
-    electrify_mult = 1
+    electrify_mult = 1,
+    
+    blast_radius = e_t.blast_radius,
+    explosion_time = e_t.explosion_time
   }  
   
   local b_pos
@@ -205,28 +215,74 @@ function follow_player(e)
   
   e.pos.x = e.pos.x + e.v.x
   e.pos.y = e.pos.y + e.v.y
+  -- log(e.electrify_mult)
+  if e.electrify_mult > .1 and dist(e.pos.x + e.w/2, e.pos.y + e.h/2, p.pos.x + e.w/2, p.pos.y + e.h/2) < e.w *1.1 then
+    hit_player()
+  end
   
 end
 
+function kamikaze_pattern(e)
+  if e.exploding then
+    if e.explosion_timer + e.explosion_time < time_since_launch then
+    -- log("exploded")
+     e.exploding = false
+     e.exploded = true
+     if dist(e.pos.x + e.w/2, e.pos.y+ e.h/2, p.pos.x+p.w/2, p.pos.y+ p.h/2) < e.blast_radius then hit_player() end
+     hit_enemy(e)
+    end
+  else
+    follow_player(e)
+    
+    if dist(e.pos.x + e.w/2, e.pos.y + e.h/2, p.pos.x + p.w/2, p.pos.y + p.h/2) < 20 then
+      -- log("exploding")
+      e.exploding = true
+      e.explosion_timer = time_since_launch
+    end
+    
+  end
+end
 
 function draw_enemies()
   color(0)
   
   for i, e in pairs(enemies) do
-  
-    if e.state == "to_die" or e.state == "hurt" then
-      rectfill(e.pos.x, e.pos.y, e.pos.x + e.w, e.pos.y + e.h, _colors.black)
-    else
-      rectfill(e.pos.x, e.pos.y, e.pos.x + e.w, e.pos.y + e.h, e.color)
-      
-      if e.burning then        
-        rectfill(e.pos.x + e.w - 5, e.pos.y - 15, e.pos.x + e.w + 5, e.pos.y - 5, _colors.light_red)
-      end
-      if e.electrified then        
-        rectfill(e.pos.x - 5, e.pos.y - 15, e.pos.x + 5, e.pos.y - 5, _colors.sky_blue)
-      end
+    e.draw(e)
+    
+    if e.burning then        
+      rectfill(e.pos.x + e.w - 5, e.pos.y - 15, e.pos.x + e.w + 5, e.pos.y - 5, _colors.light_red)
+    end
+    if e.electrified then        
+      rectfill(e.pos.x - 5, e.pos.y - 15, e.pos.x + 5, e.pos.y - 5, _colors.sky_blue)
     end
     
   end
   
 end
+
+
+function draw_1(e)
+  local c = (e.state == "to_die" or e.state == "hurt") and _colors.black or e.color
+  rectfill(e.pos.x, e.pos.y, e.pos.x + e.w, e.pos.y + e.h, c)
+end
+
+function draw_kamikaze(e)
+  
+  local c = (e.state == "to_die" or e.state == "hurt") and _colors.black or e.color
+  
+  -- log(c)
+  if e.exploding then
+    
+    local x_o = irnd(5)
+    local y_o = irnd(5)
+    rectfill(e.pos.x + x_o, e.pos.y + y_o, e.pos.x + e.w + x_o, e.pos.y + e.h + y_o, (flr(e.explosion_timer*100)%2 == 0 and e.color or _colors.yellow))
+    
+    if e.explosion_timer and e.explosion_timer + e.explosion_time - dt() * 5 < time_since_launch then
+      circfill(e.pos.x + e.w/2, e.pos.y + e.h/2, e.blast_radius, _colors.black)
+    end
+    
+  else
+    rectfill(e.pos.x, e.pos.y, e.pos.x + e.w, e.pos.y + e.h, c)
+  end
+end
+
