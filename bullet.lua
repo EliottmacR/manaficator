@@ -2,7 +2,6 @@
 bullets = {}
 count_bullets = 0
 
-
 function init_bullet(from, x, y, angle, spd, size, life, speed_loss, param)
   local speed = spd or 10
   b = {  
@@ -25,12 +24,14 @@ function init_bullet(from, x, y, angle, spd, size, life, speed_loss, param)
     ricochet = 0,
     last_hit = nil,
     damage = 1 + (bonuses.damage or 0),
-    speed_loss = speed_loss
+    speed_loss = speed_loss,
+    blast_radius = param.blast_radius,
   }
 
   param = param or {}  
   b.burning = param.burning
   b.electrified = param.electrified
+  b.explosive = param.explosive
   b.ricochet = param.ricochet
   b.is_laser = param.is_laser    
   b.is_boulder = param.is_boulder    
@@ -54,6 +55,11 @@ function update_bullets(dt)
       b.speed = 0
       b.v = {x = 0, y = 0}
     elseif b.state == "to_die" then
+      if b.is_exploding then         
+        if dist(b.pos.x - p.pos.x - p.w/2, b.pos.y - p.pos.y - p.h/2) < b.blast_radius + p.w/4 then
+          hit_player()
+        end
+      end
       bullets[i] = nil
     elseif b.state == "hit" then
       b.state = ""
@@ -65,23 +71,47 @@ function update_bullets(dt)
       update_pos_bullet(b)
     end    
     if b.life < 0 or b.pos.x < border_w - 8 or b.pos.x > ww - b.r - border_w + 8 or b.pos.y < border_h - 8 or b.pos.y > hh - b.r - border_h + 8 then
-      b.state = "to_die"
+      if b.life > 0 and b.explosive then
+        b.life = min( b.life, .1 )
+      else
+        b.state = "to_die"
+      end
+    end
+    
+    if bullet_alive(b) and b.from == "enemy" then
+    
+      if b.life < .1 and b.explosive then
+        b.is_exploding = true
+        here()
+      end
+    
+      for i, bb in pairs(bullets) do 
+        if bullet_alive(bb) and bb.from == "player" and dist(b.pos.x - bb.pos.x, b.pos.y - bb.pos.y) < b.r + bb.r then 
+          hit_bullet(b)
+          hit_bullet(bb)
+        end
+      end
+      
     end
     
   end
-  
+    
   
 end
 
 function update_vec_bullet(b, dt) 
   if not b then return end
-  vanilla_update_vector(b)
+  
   local parameters = { bullet = b}
-  for ind, func_id in pairs(on_b_v_update_skills) do
-    if p.skills[func_id] then 
-      skills[func_id](parameters) 
-    end 
-  end
+  
+  if b.from == "player" then  
+    for ind, func_id in pairs(on_b_v_update_skills) do
+      if p.skills[func_id] then 
+        skills[func_id](parameters) 
+      end 
+    end
+  end-----------------------
+  vanilla_update_vector(b)
   
 end
 
@@ -115,22 +145,32 @@ end
 
 function collision_bullets(entity)
   local e = entity
+  
   for i, b in pairs(bullets) do 
-    if bullet_alive(b) and entity.class ~= b.from then
+    if bullet_alive(b) and entity.class ~= b.from then      
       local parameters = { bullet = b, enemy = e}
-      
+      damage_done = true      
       if dist(e.pos.x + e.w/2 - b.pos.x, e.pos.y + e.w/2 - b.pos.y) < e.w / 2 + b.r then 
         local no_skill = true
-        for ind, func_id in pairs(on_b_col_enemy_skills) do          
-          if p.skills[func_id] then 
-            skills[func_id](parameters) 
-            no_skill = false
-          end             
-        end   
-        if no_skill then
+        -----------------------
+        if b.from == "player" then  
+          for ind, func_id in pairs(on_b_col_enemy_skills) do          
+            if p.skills[func_id] then 
+              skills[func_id](parameters) 
+              no_skill = false
+            end             
+          end   
+        end
+        -----------------------
+        if no_skill or damage_done == true then
           hit_bullet(b)
-          hit_enemy(e, b.damage)
+          if b.from == "player" then
+            hit_enemy(e, b.damage)
+          else
+            hit_player()
+          end 
         end 
+        -----------------------
       end 
     end 
   end
@@ -157,72 +197,97 @@ function draw_bullets()
   end
 end
 
-function laser_drawing(b)
+-- function laser_drawing(b)
 
-  if (b.angle > .5/4 and b.angle <.5 * 3/4) or (b.angle > .5 + .5/4 and b.angle <.5 + .5 * 3/4) then
-    big_line_v(b.pos.x, b.pos.y, b.pos.x + cos(b.angle) * b.laser_length , b.pos.y + sin(b.angle) * b.laser_length, 3)
-  else
-    big_line_h(b.pos.x, b.pos.y, b.pos.x + cos(b.angle) * b.laser_length , b.pos.y + sin(b.angle) * b.laser_length, 3)
-  end
-end
+  -- if (b.angle > .5/4 and b.angle <.5 * 3/4) or (b.angle > .5 + .5/4 and b.angle <.5 + .5 * 3/4) then
+    -- big_line_v(b.pos.x, b.pos.y, b.pos.x + cos(b.angle) * b.laser_length , b.pos.y + sin(b.angle) * b.laser_length, 3)
+  -- else
+    -- big_line_h(b.pos.x, b.pos.y, b.pos.x + cos(b.angle) * b.laser_length , b.pos.y + sin(b.angle) * b.laser_length, 3)
+  -- end
+-- end
 
 
 function vanilla_drawing(b)
   if b.state == "to_die" or b.state == "dying" then
     circfill(b.pos.x, b.pos.y, b.r + 8, _colors.orange)
   else
-    local b_color = _colors.white
+    if b.from == "player" then
+        if b.electrified then
+          p_color = _colors.white
+          
+          local r_w = b.r
+          
+          local s_x = b.pos.x
+          local s_y = b.pos.y
+          local s_a = b.angle
+                   
+          local x = s_x + cos(s_a + 1/4) * r_w
+          local y = s_y + sin(s_a + 1/4) * r_w                 
 
-    if b.electrified or b.burning then
-
+          for i = 0, 5 do                
+            local r_x = cos(s_a + 1/2) * r_w
+            local r_y = sin(s_a + 1/2) * r_w
+                     
+            local xx = irnd(r_w)
+            local yy = irnd(r_w)
+            circfill(x + cos(s_a + 1/2) * xx * 3 + cos(s_a - 1/4) * yy * 2 ,
+                     y + sin(s_a + 1/2) * xx * 3 + sin(s_a - 1/4) * yy * 2 , 
+                     irnd(3),
+                     p_color)
+          end
+        end
+    
+      
       if b.burning then
-        b_color = _colors.light_red
-        -- p_color = _colors.dark_red
+        pal(5, 2)
       end
       
-      if b.electrified then
-        -- b_color = _colors.sky_blue
-        p_color = _colors.white
+      aspr (6, b.pos.x , b.pos.y , b.angle , 1, 1, 0.5, 0.5, 1 * (b.r / 8), 1 * (b.r / 8)  )
+      
+      pal()
+    else
+      aspr (5, b.pos.x , b.pos.y , b.angle , 1, 1, 0.5, 0.5, 2 , 2 )
+      
+    -- if b.burning then
+      -- pal(5, 2)
+      -- pal(2, 5, false)
+    -- end
+    -- local b_color = _colors.white
 
-        local r_w = b.r
+    -- if b.electrified or b.burning then
+
+      -- if b.burning then
+        -- b_color = _colors.light_red
+      -- end
+      
+      -- if b.electrified then
+        -- p_color = _colors.white
+
+        -- local r_w = b.r
                  
-        local x = b.pos.x + cos(b.angle + 1/4) * r_w
-        local y = b.pos.y + sin(b.angle + 1/4) * r_w                 
+        -- local x = b.pos.x + cos(b.angle + 1/4) * r_w
+        -- local y = b.pos.y + sin(b.angle + 1/4) * r_w                 
 
-        for i = 0, 5 do                
-          local r_x = cos(b.angle + 1/2) * r_w
-          local r_y = sin(b.angle + 1/2) * r_w
+        -- for i = 0, 5 do                
+          -- local r_x = cos(b.angle + 1/2) * r_w
+          -- local r_y = sin(b.angle + 1/2) * r_w
                    
-          local xx = irnd(r_w)
-          local yy = irnd(r_w)
-          circfill(x + cos(b.angle + 1/2) * xx * 3 + cos(b.angle - 1/4) * yy * 2 ,
-                   y + sin(b.angle + 1/2) * xx * 3 + sin(b.angle - 1/4) * yy * 2 , 
-                   irnd(3),
-                   p_color)
-        end
+          -- local xx = irnd(r_w)
+          -- local yy = irnd(r_w)
+          -- circfill(x + cos(b.angle + 1/2) * xx * 3 + cos(b.angle - 1/4) * yy * 2 ,
+                   -- y + sin(b.angle + 1/2) * xx * 3 + sin(b.angle - 1/4) * yy * 2 , 
+                   -- irnd(3),
+                   -- p_color)
+        -- end
+      -- end
+    -- end     
+    -- circfill(b.pos.x, b.pos.y, b.r, b_color)    
+
+      if b.is_exploding then
+        circfill(b.pos.x , b.pos.y , b.blast_radius, flr(time_since_launch*10)%2 == 0 and _colors.black or _colors.yellow)
       end
-    end 
     
-    circfill(b.pos.x, b.pos.y, b.r, b_color)  
+    end
     
   end
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

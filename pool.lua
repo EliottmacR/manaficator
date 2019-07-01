@@ -11,6 +11,8 @@ h_pool = 0
 b_pool = 0
 local pool_s        = nil
 
+back_surf = nil
+
 message = ""
 message_timer = 0
 wave_timer = 0
@@ -35,6 +37,9 @@ local t_respawn = 0
 
 function init_pool()
   
+  -- GW = 700
+  -- GH = 900
+  
   x_pool = 10
   y_pool = GH * 1/4 + 5
   ww = GW - 20
@@ -46,9 +51,8 @@ function init_pool()
   w_pool = ww
   h_pool = hh
   b_pool = 32
-  
-  
-  pool_s = new_surface(ww, hh)
+    
+  pool_s = new_surface(ww, hh)  
   
   init_skills()
   init_player(ww, hh) 
@@ -65,12 +69,6 @@ function update_pool(dt)
     screen_shake_timer = screen_shake_timer - dt 
   else
     screen_shake_timer = 0
-  end
-  
-  if btn(1) then 
-    -- local i = 1 + irnd(4)
-    -- bonus_points[i] = bonus_points[i] + 1   
-    -- update_bonuses()  
   end
   
   update_waves(dt)  
@@ -116,8 +114,8 @@ function draw_pool()
   
   if wave_timer > 0 then
     use_font("big")
-    local str = "Wave " .. current_wave
-    cool_print(str, w_pool/2- str_px_width(str) / 2, h_pool * 1/4  - str_px_height(str) + sin_b * 5) 
+    local str = (current_wave == (#waves + 1)) and "Endless Wave" or "Wave " .. current_wave
+    very_cool_print(str, w_pool/2- str_px_width(str) / 2, h_pool * 1/4  - str_px_height(str) + sin_b * 5, 0, 7) 
   
   
   end

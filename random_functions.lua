@@ -3,7 +3,7 @@ function very_cool_print(str, x, y, hspd, vspd, inner_col, outer_col)
   
   local w = str_px_width(str)
   local h = str_px_height(str)
-  local x = x - w / 2
+  local x = x
   local hspd = hspd or 15 
   local vspd = vspd or 15
   local inner_col = inner_col or 1
@@ -137,6 +137,14 @@ function easeInOut (timer, value_a, value_b, duration)
 	timer = timer - 1  
  	return -value_b/2 * (timer*(timer-2) - 1) + value_a
 end 
+
+-- function easeIn (timer, value_a, value_b, duration)
+  
+  -- timer = timer/duration  
+	-- return value_b*timer*timer + value_a 
+	-- timer = timer - 1  
+ 	-- return -value_b/2 * (timer*(timer-2) - 1) + value_a
+-- end 
 
 function point_in_rect(x, y, x1, y1, x2, y2)
   return x > x1 and x < x2 and y > y1 and y < y2

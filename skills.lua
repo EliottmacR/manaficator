@@ -82,7 +82,7 @@ function auto_aim(parameters)
   if not x then return end  
   local angle_enemy = ((atan2(b.pos.x - x, b.pos.y - y ) + .5 % 1) + 1) % 1   
   if (b.angle - angle_enemy == 0) then return end  
-  local step = 0.02
+  local step = 0.03
   if abs(b.angle - angle_enemy)% 1 < .5 then
     if (b.angle < angle_enemy) then b.angle = b.angle + step else b.angle = b.angle - step end
   else
@@ -95,17 +95,14 @@ end
 function step_movement(parameters)
   local b = parameters.bullet
   b.speed_mult = abs(sin( b.life / b.m_life))
-  -- update_vector(b)
 end
 
 function fire_aspect(parameters)
   local b = parameters.bullet
   local e = parameters.enemy
   
-  if dist(e.pos.x + e.w/2, e.pos.y+ e.h/2, b.pos.x, b.pos.y) <= b.r*1.5 then
-    if b.burning then 
-      burn_enemy(e)
-    end
+  if b.burning then 
+    burn_enemy(e)
   end
   
 end
@@ -118,20 +115,16 @@ function burn_enemy(e)
     e.burning = true
     e.time_burned = time_since_launch
   end
+  -- damage_done = true 
 end
 
 function electricity_aspect(parameters)
   local e = parameters.enemy    
   local b = parameters.bullet 
-  
-  local d = dist(e.pos.x + e.w/2, e.pos.y + e.h/2, b.pos.x, b.pos.y)
-  
-  if dist(e.pos.x + e.w/2, e.pos.y+ e.h/2, b.pos.x, b.pos.y) <= b.r*1.5 then
-    electrify_enemy(e)
-    hit_enemy(e, b.damage)
-    hit_bullet(b)
-  end
-   
+    
+  electrify_enemy(e)
+  hit_bullet(b)
+  damage_done = true 
 end
 
 function electrify_enemy(e)      
@@ -154,19 +147,24 @@ function rebound(parameters)
   if b.pos.x < b_pool then 
     b.v.x   = b.v.x * -1
     b.pos.x = b_pool
+    b.angle = atan2(b.v.x, b.v.y)
   elseif x > w_pool - b.r - b_pool then 
     b.v.x   = b.v.x * -1 
-    b.pos.x = w_pool - b.r - b_pool    
+    b.pos.x = w_pool - b.r - b_pool  
+    b.angle = atan2(b.v.x, b.v.y)
   end
   
   if b.pos.y < b_pool then 
     b.v.y = b.v.y * -1 
     b.pos.y = b_pool
+    b.angle = atan2(b.v.x, b.v.y)
   elseif b.pos.y > h_pool - b.r - border_h then
     b.v.y = b.v.y * -1 
     b.pos.y = h_pool - b.r - border_h
-  end    
-  b.angle = atan2(b.v.x, b.v.y)
+    b.angle = atan2(b.v.x, b.v.y)
+  end
+  
+  
 end
 
 function explosions(parameters)
@@ -180,6 +178,7 @@ function explosions(parameters)
       e.o_f.y = sin(b.angle) * 5    
     end
   end
+  damage_done = false 
 end
 
 

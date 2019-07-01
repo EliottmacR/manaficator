@@ -10,23 +10,19 @@ local hud = { surface          = nil,
             }
            
 function init_hud()
-
   hud.surface = new_surface( GW - 20, GH/4 - 15)
   hud.back = "hud_png"
   hud.x = 10
   hud.y = 10
-  
+  hud.w, hud.h = surface_size(hud.surface)
   starpos = {
               { {523, 143},         {529, 122},         {517, 104},         {529, 80},         {517, 61},         {523, 39}         },
 
               { {523+ 51, 143},     {529+ 51, 122},     {517+ 51, 104},     {529+ 51, 80},     {517+ 51, 61},     {523+ 51, 39}     },
 
               { {523+ 51+ 51, 143}, {529+ 51+ 51, 122}, {517+ 51+ 51, 104}, {529+ 51+ 51, 80}, {517+ 51+ 51, 61}, {523+ 51+ 51, 39} }
-}
-  
-  
-  
-
+  }  
+  PB = 0
 end
 
 function update_hud()
@@ -57,21 +53,30 @@ function draw_hud()
     -- life
     local x = (GW - 20) / 2 - 12 - 2 * (30 + 5)
     local y = 28    
-    for i = 0, p.max_hp - 1 do 
-        circfill(i * (30 + 5) + x + 13, 15 + y, 13,  _colors.light_red)        
-        circfill(i * (30 + 5) + x + 13, 15 + y,  8, i > p.hp and _colors.black or _colors.white)
+    for i = 1, p.max_hp do 
+        circfill((i-1) * (30 + 5) + x + 13, 15 + y + sin(time_since_launch / p.hp*3 + (i/p.max_hp)) * 6, 13,  _colors.light_red)        
+        circfill((i-1) * (30 + 5) + x + 13, 15 + y + sin(time_since_launch / p.hp*3 + (i/p.max_hp)) * 6,  8, i > p.hp and _colors.black or _colors.white)
     end
     
     -- wave
+    local wv = current_wave == 0 and 1 or (current_wave == (#waves + 1) and "inf" or current_wave)
+    use_font("big")
     
-    -- use_font("wave_font")
-    -- if current_wave == 0 then
-    shaded_cool_print(
-    current_wave == 0 and 1 
-    or 
-    (current_wave == (#waves + 1) and "endless" or current_wave), 0, 0)
-    -- else
-      -- shaded_cool_print(current_wave, 0, 0)
+    local str = "wave"
+    cool_print(str, 100 - str_px_width(str) / 2, 15)
+    shaded_cool_print(wv, 100 - str_px_width(wv) / 2, 50 ) -- + sin_b * 2)
+    
+    -- score
+    local str = p.score
+    shaded_cool_print(str, hud.w/2 - str_px_width(str) / 2 , hud.h * 3/4 - 5 )
+    
+    -- PB
+    local str_PB = max(p.score, PB or 0)
+    shaded_cool_print(str_PB, hud.w/4 - str_px_width(str_PB) / 2  - 68, hud.h * 3/4 - 10) -- + sin_b * 2 )
+    
+    local str = "P.Best"
+    cool_print(str, hud.w/4 - str_px_width(str) / 2  - 68, hud.h * 3/4 - 50 )
+    
     
   target()  
     

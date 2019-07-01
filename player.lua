@@ -3,6 +3,7 @@ p = {} -- player
 -- local ww = 0
 -- local hh = 0
 
+
 local fire_cooldown = 0
 
 fire_mods = {}
@@ -18,25 +19,18 @@ function init_fire_mods()
       b_speed = 20,
       b_life = .8 ,
       b_rnd = .04,
-      speed_loss = .95} ,
+      speed_loss = .95},
       
-    -- { name = "laser",
-      -- id = 2,
-      -- start_d = 0,
-      -- fire_rate = 0,
-      -- b_size = 1,
-      -- b_speed = 30,
-      -- b_life = .6 ,
-      -- b_rnd = .04}  ,
-      
-    -- { name = "boulder",
-      -- id = 3,
-      -- start_d = 16,
-      -- fire_rate = .2,
-      -- b_size = 15,
-      -- b_speed = 10,
-      -- b_life = .6 ,
-      -- b_rnd = .04}  
+    { name = "thrower",
+      id = 1,
+      start_d = 16,
+      fire_rate  = 2,
+      b_size = 10,
+      b_speed = 50,
+      b_life = 2 ,
+      b_rnd = .04,
+      blast_radius = 100,
+      speed_loss = .85}
   }
 end
 
@@ -51,11 +45,15 @@ function init_player()
       x = 0,
       y = 0},  
       
+    score = 0,
+        
     w = 16 * 2,
     h = 16 * 2,
     scale_spr = 2,
+    
     hp = 5,
     max_hp = 5,
+    
     skills = {},
     shoot = single_bullet,
     shoot_times = 1,
@@ -67,11 +65,13 @@ function init_player()
     invicible_cooldown = 0,
     invicible_time = 1.3   
   }  
+  
+  submitted_score = false
+  
 end
 
 function update_player(dt)
-  
-  if btnp(1) then show_message("ouch") end
+  -- if btnp(1) then show_message("ouch") end
   
   local mx = 7 * dt * 10
   p.fire_cooldown = p.fire_cooldown - dt
@@ -82,6 +82,7 @@ function update_player(dt)
   
   p.invicible_cooldown = p.invicible_cooldown - dt
   
+  if p.dead then return end
   -- 4 5 6 7
   -- z q s d
   if btn(4) then
@@ -173,33 +174,42 @@ function update_pos_player()
 end
 
 function hit_player()
-  -- log("player hit")
+  if p.dead then return end
   if p.invicible_cooldown < 0 then
     p.invicible_cooldown = p.invicible_time
     p.hp = p.hp - 1
     screen_shake()
+    
+    if p.hp < 1 then p.dead = true end
+    
+    if p.dead and not submitted_score then 
+      init_game_over()
+    end
   end
-  -- log(p.hp)
 
 end
 
 
 function draw_player()
-  -- if p.dash_cooldown + dt()*10 > 0 and p.dash_cooldown < 0  then
+
+  local angle = atan2(p.pos.x + p.w/2 - btnv(2), p.pos.y + p.h/2 - btnv(3) + hh*1/3) + .5
+  
+  local c = cos(angle)
+  local s = sin(angle)
   
   if p.invicible_cooldown > 0 and ( flr(p.invicible_cooldown * 10) % 2 == 0 ) then
   else
     if p.dash_cooldown > 0 then
       rectfill(p.pos.x - abs(p.dash_cooldown ) * 10  , p.pos.y - abs(p.dash_cooldown) * 10, p.pos.x + p.w + abs(p.dash_cooldown) * 10, p.pos.y + p.h + abs(p.dash_cooldown) * 10, _colors.white)
     end
-    rectfill(p.pos.x, p.pos.y, p.pos.x + p.w, p.pos.y + p.h, _colors.orange)
+    
+    aspr (0, p.pos.x + p.w / 2, p.pos.y + p.h / 2, angle - .25, 1, 1, 0.5, 0.5, 1, 1  )
+    
+    -- palt()
+    -- rectfill(p.pos.x, p.pos.y, p.pos.x + p.w, p.pos.y + p.h, _colors.orange)
+    
   end
   
-  -- rectfill(p.pos.x, p.pos.y, p.pos.x + p.w, p.pos.y + p.h, _colors.orange)
-  local angle = atan2(p.pos.x + p.w/2 - btnv(2), p.pos.y + p.h/2 - btnv(3) + hh*1/3) + .5
-  
-  local c = cos(angle)
-  local s = sin(angle)
   
   line(p.pos.x + p.w/2 + c * 32,
        p.pos.y + p.h/2 + s * 32, 
@@ -207,4 +217,14 @@ function draw_player()
        p.pos.y + p.h/2 + s * 64, 
        _colors.white)
   
+end
+
+function submit_score()
+  submitted_score = true
+end
+
+function add_points(points)
+  if not p.dead then
+    p.score = p.score + points
+  end
 end

@@ -7,6 +7,7 @@ require("waves")
 require("hud")
 require("bonuses")
 require("skills")
+require("game_over")
 -- GW = 304
 -- GH = 380
 
@@ -17,13 +18,18 @@ local background_clr = 4
 time_since_launch = 0
 sin_b = 0
 
+my_id = nil
+my_name = nil
+
 
 function init_game()
 
   load_font("sugarcoat/TeapotPro.ttf", 64*3/4, "big", true)
   load_font("sugarcoat/TeapotPro.ttf", 64/2, "log", false)
-  hud_png = load_png("hud_png", "hud.png", nil, false)
-  -- init_screens()
+  
+  load_font("sugarcoat/TeapotPro.ttf", 64/2 , "leaderboard", false)
+  hud_png = load_png("hud_png", "assets/hud.png", nil, false)
+  spr_s = load_png("spr_s", "assets/spr.png", nil, false)
   
   register_btn(0, 0, input_id("mouse_button", "lb"))
   register_btn(1, 0, input_id("mouse_button", "rb"))
@@ -41,16 +47,34 @@ function init_game()
     register_btn(6, 0, input_id("keyboard", "s"))
     register_btn(7, 0, input_id("keyboard", "d"))
   end
+  
   register_btn(8, 0, input_id("keyboard", "p"))
   register_btn(9, 0, input_id("keyboard", "f"))
   register_btn(10, 0, input_id("keyboard", "space"))
   
-  -- init_sk_tree()
-  init_hud(dt)
-  init_pool(dt)
-  init_sk_tree()
+  register_btn(11, 0, input_id("mouse_button", "scroll_y"))
   
+  spritesheet("spr_s")
+  spritesheet_grid(32, 32)
+  palt(15, true)
   
+  load_user_info()
+  new_game()
+
+end
+
+
+function load_user_info()
+
+  network.async(  
+    function () 
+      user = castle.user.getMe()
+      highscores = castle.storage.getGlobal("highscores") or {}  
+      my_id   = user.userId
+      my_name = user.name or user.username
+      PB = highscores[my_id] and highscores[my_id].p_score or 0
+      if PB then log(PB) end
+    end)
 end
   
 
@@ -61,6 +85,11 @@ function update_game(dt)
   update_hud(dt)
   update_pool(dt)
   
+  if game_over then
+    update_game_over()
+  end
+  
+  
 end
 
 function draw_game()
@@ -70,16 +99,50 @@ function draw_game()
   if p.invicible_cooldown == p.invicible_time then
     cls(_colors.dark_red)
   end
+  
+  if game_over then
+    draw_game_over()
+  end
+  
 end
 
-
--- function draw_mouse()
-    
--- end
 function draw_palette()
   for i = 0, 15 do 
     local x  = i * (30 + 5)
     local co = i        
     rectfill(x, 0, x + 30, 0 + 30, co)       
   end
+end
+
+
+function new_game()
+  -- game
+  time_since_launch = 0
+  sin_b = 0
+
+  my_id = nil
+  my_name = nil
+  
+  init_hud()
+  init_pool()
+  init_sk_tree()
+  
+  -- bullets
+  bullets = {}
+  count_bullets = 0
+  
+  -- enemy
+  enemies = {}
+  
+  -- game over
+  game_over = false
+  g_o_surf = nil
+  
+  -- player
+  p = {} 
+  
+  init_hud()
+  init_pool()
+  init_sk_tree()
+  
 end

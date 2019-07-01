@@ -14,23 +14,28 @@ function init_waves()
   waves = {
     --[enemy_type] = remaining
     { -- 1
-      [1] = 1,
-      [3] = 0,
-      [2] = 0
+      [1] = 3,
+      [2] = 3,
+      [3] = 3,
+      [4] = 1
     }
   }
   -- for i = 1, 10 do 
     -- waves[i] = { 
-                -- 2 + flr(i/2),
+                -- 2 + flr(i/2.5),
                 -- flr(i/2) ,
-                -- max(0, flr(i/2) - 2)
+                -- max(0, flr(i/2) - 2),
+                -- max(0, flr(i/1.3 - 2 * 1.3))
     -- }  
   -- end
   
   spawning_enemies = false
+  condition_met = false
   current_wave = 0
   time_until_spawn = 0  
   time_before_lvl_up = .6
+  time_leveled_up = 0
+  endless_mode = false
   timer_lvl_up = time_before_lvl_up
   endless_enemy_spawn_time = 1
 end
@@ -41,12 +46,9 @@ function begin_next_wave()
   
   current_wave = current_wave + 1
   spawning_enemies = true
-  log("Beginning wave ".. current_wave)
 end
 
 function update_waves(dt)
-  -- log("cr " .. current_wave)
-  -- log("cr " .. current_wave)
   if current_wave == #waves + 1 then endless_mode = true end
   
   if current_wave > #waves + 1 then return end
@@ -60,8 +62,8 @@ function update_waves(dt)
       if endless_mode then
       
         init_enemy( random_enemy_type(nil)) 
-        log(endless_enemy_spawn_time)
-        endless_enemy_spawn_time = endless_enemy_spawn_time * .98
+        
+        endless_enemy_spawn_time = max(endless_enemy_spawn_time * .983, .35)
         time_until_spawn = endless_enemy_spawn_time
       
       elseif not is_wave_ended() then
@@ -97,8 +99,14 @@ end
 
 function random_enemy_type(current_wave)
   if not current_wave then
-    local choosen_id = 0
-  return
+    local choosen_id = 1 + irnd(100)
+    
+    if choosen_id < 50 then return 1 end
+    
+    if choosen_id < 80 then return 2 end
+    
+    return 3  
+    
   end
 
   local indexes  = {}
@@ -106,7 +114,8 @@ function random_enemy_type(current_wave)
   indexes = get_indexes(waves[current_wave])
   
   local choosen_id = indexes[1 + irnd(#indexes)]
-  
+  -- log(choosen_id)
+  -- log(current_wave)
   while waves[current_wave][choosen_id] < 1  do 
     choosen_id = 1 + irnd(#indexes)   
   end

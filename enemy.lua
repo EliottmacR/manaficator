@@ -8,24 +8,47 @@ function init_enemy_types()
   enemy_types = {
   
     {
+      type = 1,
       life = 2,
-      speed = 6 ,
-      minspeed = 5 ,
-      maxspeed = 7 ,
+      speed = 3 ,
+      minspeed = 3 ,
+      maxspeed = 3 ,
       pattern = follow_player,
-      draw = draw_1,
-      color = 7
+      draw = draw_enemy,
+      color = 7,
+      points = 3
     },
     {
+      type = 2,
       life = 2,
       speed = 7 ,
       minspeed = 6 ,
       maxspeed = 8 ,
       pattern = follow_player,
-      draw = draw_1,
-      color = 8
+      draw = draw_enemy,
+      color = 8,
+      points = 5
     },
     {
+      type = 3,
+      life = 1,
+      speed = 3 ,
+      minspeed = 3 ,
+      maxspeed = 3 ,
+      pattern = thrower_pattern,
+      draw = draw_enemy,
+      color = _colors.dark_purple,
+      points = 4,
+      
+      fire_mod = 2,
+      fire_timer = 0,
+      
+      walking_timer = 2,
+      walking_time = 2,
+      
+    },
+    {
+      type = 4,
       life = 1,
       speed = 7 ,
       minspeed = 6 ,
@@ -34,7 +57,8 @@ function init_enemy_types()
       draw = draw_kamikaze,
       blast_radius = 130,
       explosion_time = .7,
-      color = _colors.dark_purple
+      color = _colors.dark_purple,
+      points = 4
     }
   }
 
@@ -74,25 +98,36 @@ function init_enemy(enemy_type)
     electrify_mult = 1,
     
     blast_radius = e_t.blast_radius,
-    explosion_time = e_t.explosion_time
+    explosion_time = e_t.explosion_time,
+    
+    fire_timer = e_t.fire_timer,
+    fire_rate = e_t.fire_rate,
+    fire_mod = e_t.fire_mod,
+    walking_time = e_t.walking_time,
+    
+    points = e_t.points
   }  
   
   local b_pos
   local a_pos
   local way = way or irnd(4)
   
-  if way == 0 then 
+  if way == 0 then -- South
     b_pos = {x = border_w + irnd(ww - border_w*2 - e.w) , y = - e.h}
     a_pos = {x = 0, y = border_h*1.5 + e.h}
-  elseif way == 1 then 
+    e.spawning_angle = .25
+  elseif way == 1 then  -- North
     b_pos = {x = border_w + irnd(ww - border_w*2 - e.w) , y = hh}
     a_pos = {x = 0, y = - border_h*1.5 - e.h}
-  elseif way == 2 then 
+    e.spawning_angle = -.25
+  elseif way == 2 then  -- East
     b_pos = {x = - e.w , y = border_h + irnd(hh - border_h*2 - e.h)}
     a_pos = {x = border_w*1.5 + e.w, y = 0}
-  elseif way == 3 then 
+    e.spawning_angle = 0
+  elseif way == 3 then   -- Ouest
     b_pos = {x = ww , y = border_h + irnd(hh - border_h*2 - e.h)}
     a_pos = {x = -border_w*1.5 - e.w, y = 0}
+    e.spawning_angle = .5
   end
   
   e.b_pos = b_pos
@@ -100,6 +135,8 @@ function init_enemy(enemy_type)
   
   e.pos.x = e.b_pos.x
   e.pos.y = e.b_pos.y
+  e.v.x = cos(e.spawning_angle)
+  e.v.y = sin(e.spawning_angle)
   
   e.spawn_time = time_since_launch
   
@@ -113,6 +150,8 @@ function update_enemies(dt)
     if e.state == "hurt" then
       e.state = ""
     elseif e.state == "to_die" then 
+      add_points(e.points)
+      -- log(p.score)
       enemies[i] = nil 
     end
     update_enemy(e)    
@@ -154,11 +193,21 @@ function update_enemy(e)
   
   if not e.spawning then
     local p = e
-    if p.pos.x < border_w then p.pos.x = border_w
-    elseif p.pos.x > ww - p.w - border_w then p.pos.x = ww - p.w - border_w end
+    if p.pos.x < border_w then 
+      p.pos.x = border_w 
+      e.touched_wall = true
+    elseif p.pos.x > ww - p.w - border_w then 
+      p.pos.x = ww - p.w - border_w 
+      e.touched_wall = true 
+    end
     
-    if p.pos.y < border_h then p.pos.y = border_h
-    elseif p.pos.y > hh - p.h - border_h then p.pos.y = hh - p.h - border_h end  
+    if p.pos.y < border_h then 
+      p.pos.y = border_h 
+      e.touched_wall = true
+    elseif p.pos.y > hh - p.h - border_h then 
+      p.pos.y = hh - p.h - border_h 
+      e.touched_wall = true 
+    end  
   end          
   
   if e.burning then
@@ -184,19 +233,20 @@ function update_enemy(e)
     e.state = "to_die"
   end
 end
+
 function hit_enemy(e, life)
   e.life = e.life - (life or 1)
   e.state = "hurt"
 end
 
-function follow_player(e)
+function follow_player(e, step)
 
   local angle = atan2(e.pos.x - p.pos.x, e.pos.y - p.pos.y) + .5  
   
   e.angle = e.angle or angle
   
   e.speed = min(e.speed + e.maxspeed * dt() * 2, e.maxspeed) * ( e.electrify_mult or 1)
-  local step = 0.02
+  local step = step or 0.02
 
   if abs(e.angle - angle)% 1 < .5 then
     if (e.angle < angle) then e.angle = e.angle + step
@@ -232,9 +282,9 @@ function kamikaze_pattern(e)
      hit_enemy(e)
     end
   else
-    follow_player(e)
+    follow_player(e, 0.02 / 5)
     
-    if dist(e.pos.x + e.w/2, e.pos.y + e.h/2, p.pos.x + p.w/2, p.pos.y + p.h/2) < 20 then
+    if dist(e.pos.x + e.w/2, e.pos.y + e.h/2, p.pos.x + p.w/2, p.pos.y + p.h/2) < 100 or e.touched_wall then
       -- log("exploding")
       e.exploding = true
       e.explosion_timer = time_since_launch
@@ -243,46 +293,150 @@ function kamikaze_pattern(e)
   end
 end
 
+function go_to(e, target) -- {x : x, y : y}
+  local tx = target and target.x or 0
+  local ty = target and target.y or 0
+  
+  local angle = atan2(e.pos.x - tx, e.pos.y - ty) + .5  
+  
+  e.angle = e.angle or angle
+  
+  e.speed = min(e.speed + e.maxspeed * dt() * 2, e.maxspeed) * ( e.electrify_mult or 1)
+  
+  local step = step or 0.01
+
+  if abs(e.angle - angle)% 1 < .5 then
+    if (e.angle < angle) then e.angle = e.angle + step
+    else e.angle = e.angle - step
+    end
+  else
+    if (e.angle < angle) then e.angle = e.angle - step
+    else e.angle = e.angle + step
+    end
+  end
+  
+  e.angle = ((e.angle % 1) + 1) % 1    
+  
+  e.v.x = cos(e.angle) * e.speed 
+  e.v.y = sin(e.angle) * e.speed   
+  
+  e.pos.x = e.pos.x + e.v.x
+  e.pos.y = e.pos.y + e.v.y
+end
+
+
+function thrower_pattern(e)
+
+  e.fire_timer = e.fire_timer - dt()    
+  
+  if e.firing then
+    e.fire_timer = e.fire_timer - dt()    
+    if e.fire_timer < 0 then 
+      local f = fire_mods[e.fire_mod]
+      e_shoot(e) 
+      e.fire_timer = f.fire_rate + rnd(.3)
+      e.firing = false
+      e.walking = true
+      
+    end
+  
+  elseif e.walking then  
+  -- will choose a random vector at 360deg and walk before stoping
+  -- when stops, fires a bullet
+  
+    if not e.target then
+      e.target = {x = 15 + irnd(GW - 15 * 2), y = 15 + irnd(GW- 15 * 2)}
+      e.walking_timer = time_since_launch
+    end
+    
+    go_to(e, e.target) 
+    
+    if e.walking_timer + e.walking_time < time_since_launch then
+      e.firing = true
+      e.walking = false
+      e.target = nil
+    end
+    
+  else
+    e.firing = true
+  end
+    
+end
+
+function e_shoot(e)
+  
+  local angle = atan2(p.pos.x + p.w/2 - (e.pos.x + e.w/2), p.pos.y + p.h/2 - (e.pos.y + e.h/2) )  
+  e.v.x = p.pos.x + p.w/2 - (e.pos.x + e.w/2)
+  e.v.y = p.pos.y + p.h/2 - (e.pos.y + e.h/2) 
+  e.angle = angle
+  local f = fire_mods[e.fire_mod]  
+  local param = {}  
+  param.explosive = true  
+  param.blast_radius = f.blast_radius  
+  init_bullet( "enemy", 
+                e.pos.x + e.w/2 + cos(angle) * f.start_d,
+                e.pos.y + e.h/2 + sin(angle) * f.start_d, 
+                angle, 
+                f.b_speed ,
+                f.b_size  , 
+                f.b_life  ,
+                f.speed_loss,
+                param )
+end
+ 
 function draw_enemies()
   color(0)
   
   for i, e in pairs(enemies) do
     e.draw(e)
-    
+        
     if e.burning then        
-      rectfill(e.pos.x + e.w - 5, e.pos.y - 15, e.pos.x + e.w + 5, e.pos.y - 5, _colors.light_red)
+      p_color = _colors.light_red
+      local r_w = e.w               
+      local x = e.pos.x  
+      local y = e.pos.y
+      for i = 0, 5 do    
+        circfill(x + irnd(r_w) ,y + irnd(r_w), irnd(3), p_color)
+      end
     end
-    if e.electrified then        
-      rectfill(e.pos.x - 5, e.pos.y - 15, e.pos.x + 5, e.pos.y - 5, _colors.sky_blue)
-    end
-    
+    if e.electrified then
+      p_color = _colors.sky_blue
+
+      local r_w = e.w               
+      local x = e.pos.x  
+      local y = e.pos.y
+      for i = 0, 5 do    
+        circfill(x + irnd(r_w) ,y + irnd(r_w), irnd(3), p_color)
+      end      
+    end    
   end
   
-end
-
-
-function draw_1(e)
-  local c = (e.state == "to_die" or e.state == "hurt") and _colors.black or e.color
-  rectfill(e.pos.x, e.pos.y, e.pos.x + e.w, e.pos.y + e.h, c)
 end
 
 function draw_kamikaze(e)
   
-  local c = (e.state == "to_die" or e.state == "hurt") and _colors.black or e.color
-  
-  -- log(c)
   if e.exploding then
     
     local x_o = irnd(5)
     local y_o = irnd(5)
-    rectfill(e.pos.x + x_o, e.pos.y + y_o, e.pos.x + e.w + x_o, e.pos.y + e.h + y_o, (flr(e.explosion_timer*100)%2 == 0 and e.color or _colors.yellow))
-    
+ 
     if e.explosion_timer and e.explosion_timer + e.explosion_time - dt() * 5 < time_since_launch then
-      circfill(e.pos.x + e.w/2, e.pos.y + e.h/2, e.blast_radius, _colors.black)
+      circfill(e.pos.x + e.w/2, e.pos.y + e.h/2, e.blast_radius, flr(time_since_launch*10)%2 == 0 and _colors.black or _colors.yellow)
     end
     
-  else
-    rectfill(e.pos.x, e.pos.y, e.pos.x + e.w, e.pos.y + e.h, c)
   end
+    draw_enemy(e)
+end
+
+function draw_enemy(e)
+
+  local angle = e.spawning and e.spawning_angle or atan2(e.v.x, e.v.y)
+  
+  if (e.state == "to_die" or e.state == "hurt") then
+    pal(0, 5)
+  end
+  aspr (e.type, e.pos.x + e.w / 2, e.pos.y + e.h / 2, angle - .25, 1, 1, 0.5, 0.5, 1, 1  )
+  pal()
+
 end
 

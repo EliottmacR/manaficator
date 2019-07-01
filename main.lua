@@ -82,6 +82,9 @@ function love.load()
   love.math.setRandomSeed(os.time())
   love.mouse.setVisible(true)
   
+  load_music("assets/background.wav", "bgm", .2)
+  music("bgm", true)
+  
   init_game()
 end
 
