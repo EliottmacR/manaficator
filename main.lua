@@ -101,23 +101,23 @@ function love.load()
   love.mouse.setVisible(true)
   
   -- sugar.audio.sfx ("click") 
-  load_sfx ("assets/hover.wav", "hover", .3)
+  load_sfx ("assets/hover.wav", "hover", .2)
   
-  load_sfx ("assets/lvl_up.wav", "lvl_up", .3)
+  load_sfx ("assets/lvl_up.wav", "lvl_up", .2)
   
-  load_sfx ("assets/new_game.wav", "new_game", .3)
+  load_sfx ("assets/new_game.wav", "new_game", .2)
   
-  load_sfx ("assets/e_bullet.wav", "e_bullet", .2)
-  load_sfx ("assets/p_bullet.wav", "p_bullet", .3)
+  load_sfx ("assets/e_bullet.wav", "e_bullet", .1)
+  load_sfx ("assets/p_bullet.wav", "p_bullet", .1)
   
-  load_sfx ("assets/bullet_explosion.wav", "bullet_explosion", .6)
+  load_sfx ("assets/bullet_explosion.wav", "bullet_explosion", .2)
   
   load_sfx ("assets/e_die.wav", "e_die", .2)
   load_sfx ("assets/get_hit.ogg", "p_hit", .2)
   load_sfx ("assets/get_hit_player.ogg", "p_die", .2)
   
   
-  load_music("assets/background.mp3", "bgm", .2)
+  load_music("assets/background.mp3", "bgm", .4)
   music("bgm", true)
   
   hud_png = load_png("hud_png", "assets/hud.png", nil, false)

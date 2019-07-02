@@ -20,7 +20,7 @@ function init_waves()
       -- [4] = 1
     -- }
   -- }
-  for i = 1, 10 do 
+  for i = 1, 9 do 
     waves[i] = { 
                 2 + flr(i/2.5),
                 flr(i/2) ,
