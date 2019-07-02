@@ -128,6 +128,7 @@ function shoot()
     param.electrified = p.skills[2]
   
   for i = 1, p.shoot_times do
+    sugar.audio.sfx ("p_bullet") 
     p.shoot(angle - p.dispersion + rnd(p.dispersion * 2), f, param)
   end
   

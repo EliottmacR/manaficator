@@ -365,6 +365,7 @@ end
 
 function e_shoot(e)
   
+  sugar.audio.sfx ("e_bullet") 
   local angle = atan2(p.pos.x + p.w/2 - (e.pos.x + e.w/2), p.pos.y + p.h/2 - (e.pos.y + e.h/2) )  
   e.v.x = p.pos.x + p.w/2 - (e.pos.x + e.w/2)
   e.v.y = p.pos.y + p.h/2 - (e.pos.y + e.h/2) 

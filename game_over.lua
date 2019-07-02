@@ -192,8 +192,8 @@ function refresh_leaderboard()
       my_name = user.name or user.username
     
       highscores = castle.storage.getGlobal("highscores") or {}     
-      -- highscores = {}     
-      -- castle.storage.setGlobal("highscores", highscores )     
+      highscores = {}     
+      castle.storage.setGlobal("highscores", highscores )     
       
       -- for ind, v in pairs(highscores) do
         -- ilog("highscores[my_id].p_name" ,  v.p_name)
@@ -242,6 +242,7 @@ function refresh_leaderboard()
       -- PB = highscores[my_id].p_score or 0      
       refreshing = false
     end)
+  castle.storage.setGlobal("highscores", {} )     
 end    
        
 function ilog (str, value)

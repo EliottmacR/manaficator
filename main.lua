@@ -82,7 +82,16 @@ function love.load()
   love.math.setRandomSeed(os.time())
   love.mouse.setVisible(true)
   
-  load_music("assets/background.wav", "bgm", .2)
+  load_sfx ("assets/click.wav", "click", .5)
+  -- sugar.audio.sfx ("click") 
+  load_sfx ("assets/hover.wav", "hover", .5)
+  -- sugar.audio.sfx ("hover") 
+  load_sfx ("assets/bullet.wav", "bullet", .5)
+  -- sugar.audio.sfx ("bullet") 
+  load_sfx ("assets/death.wav", "death", .5)
+  -- sugar.audio.sfx ("death") 
+  
+  load_music("assets/background.mp3", "bgm", .2)
   music("bgm", true)
   
   init_game()

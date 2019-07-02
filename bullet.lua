@@ -39,6 +39,7 @@ function init_bullet(from, x, y, angle, spd, size, life, speed_loss, param)
   
   count_bullets = count_bullets + 1
   bullets[count_bullets] = b
+  sugar.audio.sfx ("bullet") 
   
   return bullets[count_bullets]
   
@@ -78,13 +79,10 @@ function update_bullets(dt)
       end
     end
     
-    if bullet_alive(b) and b.from == "enemy" then
-    
+    if bullet_alive(b) and b.from == "enemy" then    
       if b.life < .1 and b.explosive then
         b.is_exploding = true
-        here()
-      end
-    
+      end    
       for i, bb in pairs(bullets) do 
         if bullet_alive(bb) and bb.from == "player" and dist(b.pos.x - bb.pos.x, b.pos.y - bb.pos.y) < b.r + bb.r then 
           hit_bullet(b)
