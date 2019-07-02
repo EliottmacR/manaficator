@@ -11,23 +11,23 @@ endless_mode = false
 
 function init_waves()
   
-  waves = {
-    --[enemy_type] = remaining
-    { -- 1
-      [1] = 3,
-      [2] = 3,
-      [3] = 3,
-      [4] = 1
-    }
-  }
-  -- for i = 1, 10 do 
-    -- waves[i] = { 
-                -- 2 + flr(i/2.5),
-                -- flr(i/2) ,
-                -- max(0, flr(i/2) - 2),
-                -- max(0, flr(i/1.3 - 2 * 1.3))
-    -- }  
-  -- end
+  -- waves = {
+    -- [enemy_type] = remaining
+    -- { -- 1
+      -- [1] = 1,
+      -- [2] = 3,
+      -- [3] = 3,
+      -- [4] = 1
+    -- }
+  -- }
+  for i = 1, 10 do 
+    waves[i] = { 
+                2 + flr(i/2.5),
+                flr(i/2) ,
+                max(0, flr(i/2) - 2),
+                max(0, flr(i/1.3 - 2 * 1.3))
+    }  
+  end
   
   spawning_enemies = false
   condition_met = false

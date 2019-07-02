@@ -39,7 +39,7 @@ function init_bullet(from, x, y, angle, spd, size, life, speed_loss, param)
   
   count_bullets = count_bullets + 1
   bullets[count_bullets] = b
-  sugar.audio.sfx ("bullet") 
+  -- sugar.audio.sfx ("bullet") 
   
   return bullets[count_bullets]
   
@@ -60,6 +60,7 @@ function update_bullets(dt)
         if dist(b.pos.x - p.pos.x - p.w/2, b.pos.y - p.pos.y - p.h/2) < b.blast_radius + p.w/4 then
           hit_player()
         end
+        sugar.audio.sfx ("bullet_explosion") 
       end
       bullets[i] = nil
     elseif b.state == "hit" then

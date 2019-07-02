@@ -45,7 +45,7 @@ function init_skills()
     "Target Enemy",
     "Dash!",
     "Rebound",
-    "Explosions!"
+    "Recoil!"
   }
   skills = {
     fire_aspect,        
@@ -53,7 +53,7 @@ function init_skills()
     auto_aim,     
     dash,   
     rebound,      
-    explosions  
+    _recoil  
   }
 
   burning_time = 1  
@@ -167,17 +167,18 @@ function rebound(parameters)
   
 end
 
-function explosions(parameters)
+function _recoil(parameters)
   local e = parameters.enemy        
   local b = parameters.bullet 
   
   for ind, e in pairs(enemies) do
     if dist(e.pos.x + e.w/2, e.pos.y+ e.h/2, b.pos.x, b.pos.y) <= b.r*4 then
       hit_enemy(e)
-      e.o_f.x = cos(b.angle) * 5
-      e.o_f.y = sin(b.angle) * 5    
+      e.o_f.x = cos(b.angle) * 10
+      e.o_f.y = sin(b.angle) * 10   
     end
   end
+  hit_bullet(b)
   damage_done = false 
 end
 

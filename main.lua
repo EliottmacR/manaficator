@@ -5,7 +5,6 @@ sugar.utility.using_package(sugar.S, true)
 
 if CASTLE_PREFETCH then
   CASTLE_PREFETCH({
-    -- "assets/background.wav",
     -- "assets/explosion.wav",
     -- "assets/explosion2.wav",
     -- "assets/launch.wav",
@@ -34,14 +33,32 @@ if CASTLE_PREFETCH then
     -- "screens/title_screen.lua",
     -- "screens/winground.lua",
     
-    "game.lua",
-    "main.lua",
-    "pool.lua",
-    "enemy.lua",
+    "bonuses.lua",
     "bullet.lua",
+    "enemy.lua",
+    "game.lua",
+    "game_over.lua",
+    "hud.lua",
+    "main.lua",
     "player.lua",
+    "pool.lua",
+    "random_functions.lua",
+    "skills.lua",
     "waves.lua",
-    -- "random_functions.lua"
+    
+    "assets/background.mp3",
+    "assets/bullet_explosion.wav",
+    "assets/e_bullet.wav",
+    "assets/e_die.wav",
+    "assets/get_hit.ogg",
+    "assets/get_hit_player.ogg",
+    "assets/hover.wav",
+    "assets/lvl_up.wav",
+    "assets/new_game.wav",
+    "assets/p_bullet.wav",
+    
+    "assets/hud.png",
+    "assets/spr.png",
     
 })
 end
@@ -76,23 +93,35 @@ function love.load()
   
   
   palt(0, false)    
+  palt(15, true)
   
   set_frame_waiting(30)
   
   love.math.setRandomSeed(os.time())
   love.mouse.setVisible(true)
   
-  load_sfx ("assets/click.wav", "click", .5)
   -- sugar.audio.sfx ("click") 
-  load_sfx ("assets/hover.wav", "hover", .5)
-  -- sugar.audio.sfx ("hover") 
-  load_sfx ("assets/bullet.wav", "bullet", .5)
-  -- sugar.audio.sfx ("bullet") 
-  load_sfx ("assets/death.wav", "death", .5)
-  -- sugar.audio.sfx ("death") 
+  load_sfx ("assets/hover.wav", "hover", .3)
+  
+  load_sfx ("assets/lvl_up.wav", "lvl_up", .3)
+  
+  load_sfx ("assets/new_game.wav", "new_game", .3)
+  
+  load_sfx ("assets/e_bullet.wav", "e_bullet", .2)
+  load_sfx ("assets/p_bullet.wav", "p_bullet", .3)
+  
+  load_sfx ("assets/bullet_explosion.wav", "bullet_explosion", .6)
+  
+  load_sfx ("assets/e_die.wav", "e_die", .2)
+  load_sfx ("assets/get_hit.ogg", "p_hit", .2)
+  load_sfx ("assets/get_hit_player.ogg", "p_die", .2)
+  
   
   load_music("assets/background.mp3", "bgm", .2)
   music("bgm", true)
+  
+  hud_png = load_png("hud_png", "assets/hud.png", nil, false)
+  spr_s = load_png("spr_s", "assets/spr.png", nil, false)
   
   init_game()
 end

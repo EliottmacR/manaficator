@@ -44,39 +44,39 @@ sk_tree = {
 }
 sk_tree_txt = {
   -- { [branch][level] : is_activated 
-  {"Fire Aspect",        "Speed T-1",     "Damage T-1", "Fire Rate T-2", "Speed T-2", "Rebound"},
-  {"Electro Aspect",     "Size T-1",      "Auto-Aim",   "Double",        "Size T-2",  "Shotgun"},
-  {"Range T-1",          "Fire Rate T-1", "Dash"      , "Fire Rate T-2", "Range T-2", "Explosions"}
+  -- {"Fire Aspect",        "Speed T-1",     "Damage T-1", "Fire Rate T-2", "Speed T-2", "Rebound"},
+  -- {"Electro Aspect",     "Size T-1",      "Auto-Aim",   "Double",        "Size T-2",  "Shotgun"},
+  -- {"Range T-1",          "Fire Rate T-1", "Dash"      , "Fire Rate T-2", "Range T-2", "Recoil"}
 }
 sk_tree_func = {
-  {fire,         speed_p, damage,   firer_p,      speed_p, rebounds},
-  {electricity , size_p,  auto_a,   more_bullets, size_p,  shotgun},
-  {range_p,      firer_p, dash_,    firer_p,      range_p, explosion}
+  -- {fire,         speed_p, damage,   firer_p,      speed_p, rebounds},
+  -- {electricity , size_p,  auto_a,   more_bullets, size_p,  shotgun},
+  -- {range_p,      firer_p, dash_,    firer_p,      range_p, recoil}
 }
 
 function init_sk_tree()
 
   sk_tree = {
     -- { [branch][level] : is_activated 
+    {1, 1, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0}
+    -- {0, 0, 0, 0, 0, 0}
     -- {1, 1, 1, 1, 1, 0},
     -- {1, 1, 1, 1, 1, 1},
-    -- {1, 1, 1, 1, 1, 1}
-    -- {1, 1, 0, 0, 0, 0},
+    {1, 1, 1, 1, 1, 1}
+    -- {1, 1, 1, 0, 0, 0},
     -- {0, 0, 0, 0, 0, 0}
   }
   sk_tree_txt = {
     -- { [branch][level] : is_activated 
     {"Fire Aspect",        "Speed T-1",     "Damage T-1", "Fire Rate T-2", "Speed T-2", "Rebound"},   
     {"Electro Aspect",     "Size T-1",      "Auto-Aim",   "Double",        "Size T-2",  "Shotgun"},   
-    {"Range T-1",          "Fire Rate T-1", "Dash"      , "Fire Rate T-2", "Range T-2", "Explosions"}
+    {"Range T-1",          "Fire Rate T-1", "Dash"      , "Fire Rate T-2", "Range T-2", "Recoil"}
   }
   sk_tree_func = {
     {fire,         speed_p, dmg_p,   firer_p,      speed_p, rebounds},
     {electricity , size_p,  auto_a,   more_bullets, size_p,  shotgun},
-    {range_p,      firer_p, dash_,    firer_p,      range_p, explosion}
+    {range_p,      firer_p, dash_,    firer_p,      range_p, recoil}
   }
   
   for branch_id, branch in pairs(sk_tree) do
@@ -87,15 +87,16 @@ function init_sk_tree()
 end
 
 function speed_p() bonuses.b_speed_mult   = (bonuses.b_speed_mult   or 1) * 1.12 show_message("Speed up !") end
+function speed_d() bonuses.b_speed_mult   = (bonuses.b_speed_mult   or 1) / 1.2  show_message("Speed down !") end
 function size_p()  bonuses.b_size_mult    = (bonuses.b_size_mult    or 1) * 1.2  show_message("Bigger and bigger.") end
 function range_p() bonuses.b_range_mult   = (bonuses.b_range_mult   or 1) * 1.2  show_message("Don't come near me!")end
 function firer_p() bonuses.fire_rate_mult = (bonuses.fire_rate_mult or 1) * 1.2  show_message("Take this.")end
-function dmg_p()   bonuses.damage         =  bonuses.damage + 1 end
+function dmg_p()   bonuses.damage         =  bonuses.damage + 1                  show_message("Training is important after all.") end
 
 function fire()         add_skill(1)   show_message("It's getting hot in here.")  end
 function electricity()  add_skill(2)   show_message("His magic was \"electric\".")  end 
 
-function auto_a()       add_skill(3)   show_message("I'm not strong at aiming.")  end  -- auto aim 
+function auto_a()       add_skill(3)   speed_d()   show_message("I'm not strong at aiming.")  end  -- auto aim 
 function dash_()        add_skill(4)   show_message("Press Spacebar to dash.")  end 
 function more_bullets() 
   p.shoot_times = p.shoot_times + 1 
@@ -113,7 +114,7 @@ function shotgun()      p.shoot_times = p.shoot_times + 3
                         fire_mods[p.fire_mod].speed_loss = .85
                         show_message("Have you met my friend here ?")
 end
-function explosion()    add_skill(6) show_message("No, YOU're breathtaking.") end
+function recoil()    add_skill(6) show_message("No, YOU're breathtaking.") end
 
 
 function add_bonus(id)

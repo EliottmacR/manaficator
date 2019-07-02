@@ -19,6 +19,9 @@ wave_timer = 0
 wave_display_time = 3
 message_time = 3
 
+was_on_skill = false
+is_on_skill = false
+
 function show_message(msg)
   if not msg then return end  
   message =   msg
@@ -40,10 +43,10 @@ function init_pool()
   -- GW = 700
   -- GH = 900
   
-  x_pool = 10
-  y_pool = GH * 1/4 + 5
-  ww = GW - 20
-  hh = GH * 3/4 - 15
+  x_pool = 14
+  y_pool = GH * 1/4 + 2
+  ww = GW - x_pool*2
+  hh = GH * 3/4 - 3
   
   border_w = 32
   border_h = 32
@@ -52,7 +55,43 @@ function init_pool()
   h_pool = hh
   b_pool = 32
     
-  pool_s = new_surface(ww, hh)  
+  pool_s = new_surface(ww, hh) 
+  
+  back_surf = new_surface(ww, hh) 
+  local w,h = surface_size(back_surf)
+  
+  target(back_surf)
+    rectfill(0, 0, ww, hh, _colors.dark_red)
+    rectfill(border_w, border_h, ww - border_w, hh - border_h, 10)
+    
+    for i = 0 , 10 do
+      circfill( w / 2, h/2, ww*2/3 - (ww*2/3 / 10 * i), (i%2 == 0 and _colors.dark_purple or _colors.sea_blue))
+    end
+    for i = 0 , 20 do
+      circfill( irnd(w), irnd(h), irnd(ww/5), (i%2 == 0 and _colors.dark_purple or _colors.sea_blue))
+    end
+    
+    
+    
+    for i = 0, w/32 do
+      for j = 0, h/32 do
+        if i == 0 or i == 20 or 
+           j == 0 or j == 20 then        
+          aspr (8, i * 32 , j * 32, 0, 1, 1, 0, 0, 1 , 1 )          
+        else
+          if chance(1) then
+            pal(5, irnd(15))
+            aspr (10 + irnd(4), i * 32 + 16, j * 32 + 16, 1/4 * irnd(4), 1, 1, .5, .5, 1 , 1 )
+            pal()
+          end
+        end
+      
+      end
+    end
+    
+    
+    
+  target()
   
   init_skills()
   init_player(ww, hh) 
@@ -95,8 +134,7 @@ function draw_pool()
   
   cls(background_clr)
   
-  rectfill(0, 0, ww, hh, _colors.dark_red)
-  rectfill(border_w, border_h, ww - border_w, hh - border_h, 10)
+  spr_sheet(back_surf, 0,0 )
   
   if show_lvl_up then draw_lvl_up() end
   
@@ -121,8 +159,8 @@ function draw_pool()
   end
   
   target()
-  
   spr_sheet(pool_s, x_pool + (irnd(30) - 15)  * screen_shake_timer, y_pool + (irnd(10) - 5) * screen_shake_timer)
+  
 
   
 end
@@ -209,6 +247,7 @@ end
 function update_lvl_up()
   local ct = count(lvl_up)    
   local ci = 0 
+  is_on_skill = false
   for i, level in pairs(lvl_up) do
     ci = ci + 1
     local x = ww/2 - cos(ci/ct - 1/4) * ww/4 
@@ -217,14 +256,24 @@ function update_lvl_up()
     local xp = p.pos.x + p.w/2
     local yp = p.pos.y + p.h/2
     
-    if dist(xp - x, yp - y) < p.w * 1.5 and btnp(9) then
-      -- log("level ".. level .. " in tree " .. i .. " named " .. sk_tree_txt[i][level])
-      time_leveled_up = time_leveled_up + 1
-      sk_tree[i][level] = 1
-      sk_tree_func[i][level]()
-      condition_met = true
+    if dist(xp - x, yp - y) < p.w * 1.5 then     
+      is_on_skill = true
+      if btnp(9) then
+        sugar.audio.sfx("lvl_up") 
+        -- log("level ".. level .. " in tree " .. i .. " named " .. sk_tree_txt[i][level])
+        time_leveled_up = time_leveled_up + 1
+        sk_tree[i][level] = 1
+        sk_tree_func[i][level]()
+        condition_met = true
+      end
+      if is_on_skill ~= was_on_skill then 
+        sugar.audio.sfx("hover") 
+      end
     end
   end
+  
+  was_on_skill = is_on_skill
+  
 end
 
 function draw_lvl_up()

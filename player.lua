@@ -98,7 +98,7 @@ function update_player(dt)
   end
   
   if btnp(10) and p.dash_cooldown < 0 then 
-    p.dash_cooldown = .6
+    p.dash_cooldown = .8
     local max_speed = 10 
     local angle = atan2(p.v.x, p.v.y)-- + .5
     p.v.x = p.v.x + 50 * cos(angle)
@@ -177,6 +177,7 @@ end
 function hit_player()
   if p.dead then return end
   if p.invicible_cooldown < 0 then
+    sugar.audio.sfx ("p_hit") 
     p.invicible_cooldown = p.invicible_time
     p.hp = p.hp - 1
     screen_shake()
@@ -184,6 +185,7 @@ function hit_player()
     if p.hp < 1 then p.dead = true end
     
     if p.dead and not submitted_score then 
+      sugar.audio.sfx ("p_die") 
       init_game_over()
     end
   end
@@ -200,15 +202,11 @@ function draw_player()
   
   if p.invicible_cooldown > 0 and ( flr(p.invicible_cooldown * 10) % 2 == 0 ) then
   else
-    if p.dash_cooldown > 0 then
-      rectfill(p.pos.x - abs(p.dash_cooldown ) * 10  , p.pos.y - abs(p.dash_cooldown) * 10, p.pos.x + p.w + abs(p.dash_cooldown) * 10, p.pos.y + p.h + abs(p.dash_cooldown) * 10, _colors.white)
-    end
-    
-    aspr (0, p.pos.x + p.w / 2, p.pos.y + p.h / 2, angle - .25, 1, 1, 0.5, 0.5, 1, 1  )
-    
-    -- palt()
-    -- rectfill(p.pos.x, p.pos.y, p.pos.x + p.w, p.pos.y + p.h, _colors.orange)
-    
+    if p.dash_cooldown > 0 then      
+      circfill(p.pos.x + p.w / 2, p.pos.y + p.h / 2, abs(p.dash_cooldown) * 28, _colors.white)
+    end      
+      circfill(p.pos.x + p.w / 2 + 3, p.pos.y + p.h / 2 + 3, 12, _colors.black)
+      aspr (p.dead and 14 or 0, p.pos.x + p.w / 2, p.pos.y + p.h / 2, angle - .25, 1, 1, 0.5, 0.5, 1, 1  )
   end
   
   

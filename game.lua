@@ -28,8 +28,6 @@ function init_game()
   load_font("sugarcoat/TeapotPro.ttf", 64/2, "log", false)
   
   load_font("sugarcoat/TeapotPro.ttf", 64/2 , "leaderboard", false)
-  hud_png = load_png("hud_png", "assets/hud.png", nil, false)
-  spr_s = load_png("spr_s", "assets/spr.png", nil, false)
   
   register_btn(0, 0, input_id("mouse_button", "lb"))
   register_btn(1, 0, input_id("mouse_button", "rb"))
@@ -56,7 +54,6 @@ function init_game()
   
   spritesheet("spr_s")
   spritesheet_grid(32, 32)
-  palt(15, true)
   
   load_user_info()
   new_game()
@@ -122,11 +119,7 @@ function new_game()
 
   my_id = nil
   my_name = nil
-  
-  init_hud()
-  init_pool()
-  init_sk_tree()
-  
+    
   -- bullets
   bullets = {}
   count_bullets = 0

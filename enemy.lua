@@ -15,7 +15,7 @@ function init_enemy_types()
       maxspeed = 3 ,
       pattern = follow_player,
       draw = draw_enemy,
-      color = 7,
+      color = 12,
       points = 3
     },
     {
@@ -26,7 +26,7 @@ function init_enemy_types()
       maxspeed = 8 ,
       pattern = follow_player,
       draw = draw_enemy,
-      color = 8,
+      color = 4,
       points = 5
     },
     {
@@ -57,7 +57,7 @@ function init_enemy_types()
       draw = draw_kamikaze,
       blast_radius = 130,
       explosion_time = .7,
-      color = _colors.dark_purple,
+      color = _colors.white,
       points = 4
     }
   }
@@ -151,8 +151,24 @@ function update_enemies(dt)
       e.state = ""
     elseif e.state == "to_die" then 
       add_points(e.points)
-      -- log(p.score)
       enemies[i] = nil 
+      sugar.audio.sfx ("e_die") 
+      
+      -- target(back_surf)
+      -- pal(5, e.color)
+      -- aspr (15, e.pos.x + e.w/2, e.pos.y + e.h/2, 1/4 * irnd(4), 1, 1, .5, .5, 1 , 1 )
+      -- local v = 10
+      -- local o = 6
+      -- for i = 0, v do
+        -- for j = 0, v do
+          -- if (i + j) % 2 == 1 or chance(30) then  
+            -- rectfill(e.pos.x + i*2 + o, e.pos.y + j*2 + o,e.pos.x + i*2 + 1 + o, e.pos.y + j*2 + 1 + o , _colors.sea_blue)
+          -- end
+        -- end
+      -- end
+      -- pal()
+      -- target()
+      
     end
     update_enemy(e)    
   end
@@ -274,18 +290,23 @@ end
 
 function kamikaze_pattern(e)
   if e.exploding then
+    e.angle = atan2(e.v.x, e.v.y) - .04 + irnd(.07)
+    e.v.x   = cos(e.angle)
+    e.v.y   = sin(e.angle)
+    
     if e.explosion_timer + e.explosion_time < time_since_launch then
-    -- log("exploded")
+    
      e.exploding = false
      e.exploded = true
+     
      if dist(e.pos.x + e.w/2, e.pos.y+ e.h/2, p.pos.x+p.w/2, p.pos.y+ p.h/2) < e.blast_radius then hit_player() end
      hit_enemy(e)
+     sugar.audio.sfx ("bullet_explosion") 
     end
   else
     follow_player(e, 0.02 / 5)
     
     if dist(e.pos.x + e.w/2, e.pos.y + e.h/2, p.pos.x + p.w/2, p.pos.y + p.h/2) < 100 or e.touched_wall then
-      -- log("exploding")
       e.exploding = true
       e.explosion_timer = time_since_launch
     end
@@ -333,7 +354,9 @@ function thrower_pattern(e)
     e.fire_timer = e.fire_timer - dt()    
     if e.fire_timer < 0 then 
       local f = fire_mods[e.fire_mod]
-      e_shoot(e) 
+      if not p.dead then
+        e_shoot(e) 
+      end
       e.fire_timer = f.fire_rate + rnd(.3)
       e.firing = false
       e.walking = true
@@ -364,7 +387,7 @@ function thrower_pattern(e)
 end
 
 function e_shoot(e)
-  
+
   sugar.audio.sfx ("e_bullet") 
   local angle = atan2(p.pos.x + p.w/2 - (e.pos.x + e.w/2), p.pos.y + p.h/2 - (e.pos.y + e.h/2) )  
   e.v.x = p.pos.x + p.w/2 - (e.pos.x + e.w/2)
@@ -385,9 +408,17 @@ function e_shoot(e)
                 param )
 end
  
+function shadow(enemy)
+  local e = enemy
+  circfill(e.pos.x + e.w / 2 + 3, e.pos.y + e.h / 2 + 3, 12, _colors.black)
+end
+ 
 function draw_enemies()
   color(0)
   
+  for i, e in pairs(enemies) do
+    shadow(e)
+  end  
   for i, e in pairs(enemies) do
     e.draw(e)
         

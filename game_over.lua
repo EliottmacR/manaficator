@@ -2,6 +2,9 @@
 game_over = false
 g_o_surf = nil
 
+was_on_ng = false
+is_on_ng = false
+
 function init_game_over()
 
   color1 = _colors.sky_blue
@@ -47,6 +50,7 @@ end
 
 function update_game_over(dt)
   
+  is_on_ng = false
   if info_on_pb then  
     
     if time_since_launch - beginning_animation > 2 then 
@@ -166,18 +170,26 @@ function draw_game_over()
     local border = 5
     local m_in_rect = mouse_in_rect( button_x, button_y, button_x + button_w, button_y + button_h, btnv(2), btnv(3))
     
+    is_on_ng = m_in_rect
+    
     rectfill( button_x, button_y, button_x + button_w, button_y + button_h, (m_in_rect and color2 or color4)) 
     rectfill( button_x + border, button_y + border, button_x + button_w - border, button_y + button_h - border, color1) 
     use_font("leaderboard")
     local str = "One more !"
     very_cool_print(str, button_x + 25, button_y + 20, 4, 4)
     
+    if is_on_ng ~= was_on_ng then
+      sugar.audio.sfx("hover") 
+    end
+    was_on_ng = is_on_ng
     
     if btnp(0) and m_in_rect then
+      sugar.audio.sfx("new_game") 
       PB = max(highscores[my_id].p_score or 0, p.score)  
       new_game() 
     end    
   end 
+  
   
 end
 
@@ -240,9 +252,9 @@ function refresh_leaderboard()
       -- log("ox:" .. ox)
       
       -- PB = highscores[my_id].p_score or 0      
+      castle.storage.setGlobal("highscores", {} )    
       refreshing = false
-    end)
-  castle.storage.setGlobal("highscores", {} )     
+    end) 
 end    
        
 function ilog (str, value)
