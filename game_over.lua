@@ -185,7 +185,7 @@ function draw_game_over()
     
     if btnp(0) and m_in_rect then
       sugar.audio.sfx("new_game") 
-      PB = max(highscores[my_id].p_score or 0, p.score)  
+      PB = max(highscores[my_id] and highscores[my_id].p_score or 0, p.score)  
       new_game() 
     end    
   end 
@@ -204,25 +204,21 @@ function refresh_leaderboard()
       my_name = user.name or user.username
     
       highscores = castle.storage.getGlobal("highscores") or {}     
-      --highscores = {}     
-      --castle.storage.setGlobal("highscores", highscores )     
-      
-      -- for ind, v in pairs(highscores) do
-        -- ilog("highscores[my_id].p_name" ,  v.p_name)
-        -- ilog("highscores[my_id].p_score", v.p_score) 
-      -- end
-    
-      
-      -- for i = 1, 1 do 
-        -- highscores[i] = {p_name = "Test " .. i, p_score = irnd(100)}
-      -- end
+      -- highscores = {}     
+      -- castle.storage.setGlobal("highscores", highscores )     
       
       local old = highscores[my_id]
-      if not old or old.p_score < p.score then
+      if not old or old.p_score < p.score and p.score > 0 then
         highscores[my_id] = {p_name = my_name, p_score = p.score}
       end
       
       castle.storage.setGlobal("highscores", highscores )    
+    
+      -- for ind, v in pairs(highscores) do
+        -- ilog("id" , ind)
+        -- ilog("highscores[id].p_name" ,  v.p_name)
+        -- ilog("highscores[id].p_score", v.p_score) 
+      -- end
     
       leaderboard = {}
       local copy_h = copy_table(highscores)
@@ -242,17 +238,19 @@ function refresh_leaderboard()
             end
           end          
         end
-        
-        leaderboard[cn] = index
-        copy_h[index] = nil       
-        cn = cn + 1
+        if maxi ~= 0 then
+          leaderboard[cn] = index
+          copy_h[index] = nil       
+          cn = cn + 1
+        end
       end  
-    
-      -- log("my_place :" .. my_place)
-      -- log("ox:" .. ox)
       
-      -- PB = highscores[my_id].p_score or 0      
-      -- castle.storage.setGlobal("highscores", {} )    
+      -- for ind, v in pairs(leaderboard) do
+        -- ilog("id" , ind)
+        -- ilog("leaderboard[id].p_name" , v)
+        -- ilog("leaderboard[id].p_score", v.p_score)
+      -- end
+            
       refreshing = false
     end) 
 end    

@@ -86,6 +86,7 @@ function update_player(dt)
   -- 4 5 6 7
   -- z q s d
   if btn(4) then
+    -- here()
     p.v.y = p.v.y - mx
   elseif btn(6) then
     p.v.y = p.v.y + mx
@@ -195,7 +196,7 @@ end
 
 function draw_player()
 
-  local angle = atan2(p.pos.x + p.w/2 - btnv(2), p.pos.y + p.h/2 - btnv(3) + hh*1/3) + .5
+  local angle = p.dead and .25 or atan2(p.pos.x + p.w/2 - btnv(2), p.pos.y + p.h/2 - btnv(3) + hh*1/3) + .5
   
   local c = cos(angle)
   local s = sin(angle)
@@ -209,13 +210,13 @@ function draw_player()
       aspr (p.dead and 14 or 0, p.pos.x + p.w / 2, p.pos.y + p.h / 2, angle - .25, 1, 1, 0.5, 0.5, 1, 1  )
   end
   
-  
-  line(p.pos.x + p.w/2 + c * 32,
-       p.pos.y + p.h/2 + s * 32, 
-       p.pos.x + p.w/2 + c * 64, 
-       p.pos.y + p.h/2 + s * 64, 
-       _colors.white)
-  
+  if not p.dead then
+    line(p.pos.x + p.w/2 + c * 32,
+         p.pos.y + p.h/2 + s * 32, 
+         p.pos.x + p.w/2 + c * 64, 
+         p.pos.y + p.h/2 + s * 64, 
+         _colors.white)
+  end
 end
 
 function submit_score()
