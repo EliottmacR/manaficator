@@ -1,0 +1,178 @@
+manaficator2 route
+
+
+
+
+have the player fight in a pit
+
+the player can earn coins doing quests. He uses the coins in a shop where he can buy gears
+
+he can equip gears via the Gears screen. he can take up to 3 gears
+
+
+main menu : just like that game
+
+can go to mech nps (the options), a notice board (the quests) and a shop (gears)
+
+or dungeon (door)
+
+going into the dungeon opens a menu ( "Enter the dungeon" or "Change equipped gears" )
+
+you can only go out of the dungeon if you die. A bracelet gave by the shopkeaper teleports you 
+to the entrance when in troubles
+
+
+
+need to feel very fast.
+
+
+
+plays the same as manaficator. Hud minimalistic and leaderboard.
+
+
+
+
+
+
+-------------------------------------
+
+TO DO
+
+
+Spells : 
+  DONE inventory menu
+  add spell effect to chain of effect to projectiles
+
+shop :
+  unlock spells in inventory
+
+Quests:
+  have 3 quests at all time
+  have multiple triggers in the code for achievements
+  gold on completion
+  
+Pit:
+  DONE have waves
+  DONE generate monsters
+  have monster types (graphical and behavioral)
+
+Leaderboard:
+  only for endless mode
+  record time survived
+  
+  
+  
+
+
+
+
+
+
+money can buy different wands, + objects influence on effect on touch and player stats
+
+achievements unlock tiers ? or add money and tiers need to be bought
+
+
+
+proj have a list of types and execute one after another
+
+
+proj.updates = {1, 4, 5}
+
+for i = 1, #effects do
+  if i is_in(proj.updates) then 
+end
+
+
+
+
+
+
+
+
+list of possible effects for projectiles: 
+
+different trajectories :
+straight, 
+target enemies, 
+laser, 
+cones, 
+meteor, 
+mines, 
+puddles, 
+traps, 
+around player while active, 
+go out of wand and then straight to enemy target if found)
+
+different effects on touch (explode, put on fire, leech life, slow down, corrupt, confuse, attract, infect and propagate, dont_die_on_collide)
+
+different attributes (size, speed, damage, life, 
+
+
+
+
+
+
+
+WANDS : 
+
+
+
+
+
+player has wands
+wand has info about the projectile launched.
+
+
+
+projectile accepst everything from wand 
+
+later : player buffs can influence on wand projectile creation
+
+
+
+
+
+
+
+laser : 
+
+
+when wand is activated, create a projectile controled by mouse
+
+when the projectile is destroyed, linked projectile is set to nil
+
+
+
+
+meteor:
+
+when shoot, creates a projectile. 
+Doesnt do anything until dist from spawn > dist calculated
+if dist > then activate.
+
+if activate, hurt enemies around and make explosion
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

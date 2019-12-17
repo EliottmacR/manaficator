@@ -369,16 +369,16 @@ local function update_screen_size()
   
   _clear_window()
   
+  if _D.shaders.index_to_color:hasUniform("SCREEN_SIZE") then
+    local w,h = screen_size()
+    _D.shaders.index_to_color:send("SCREEN_SIZE", {w, h})
+  end
+  
   if win_w == _prev_win_w and win_h == _prev_win_h then
     return
   else
     _prev_win_w = win_w
     _prev_win_h = win_h
-  end
-  
-  if _D.shaders.index_to_color:hasUniform("SCREEN_SIZE") then
-    local w,h = screen_size()
-    _D.shaders.index_to_color:send("SCREEN_SIZE", {w, h})
   end
 
   if sugar.on_resize then
@@ -529,9 +529,11 @@ local function screen_shader(shader_code)
       local var = var_dec:match('extern.-%a+.-([%a_]+).-;')
       local is_array = var_dec:find('%[') ~= nil
       
-      _shader_vars[var] = true
-      if is_array then
-        _shader_arrays[var] = true
+      if _D.shaders.index_to_color:hasUniform(var) then
+        _shader_vars[var] = true
+        if is_array then
+          _shader_arrays[var] = true
+        end
       end
     end
     
@@ -615,7 +617,8 @@ end
 local function color(i)
   if i == _D.color then return end
 
-  i = i % _D.palette_size
+  --i = i % _D.palette_size
+  i = _D.pltswp_dw[flr(i) % _D.palette_size]
   
   _D.love_color = _index_colors[i]
   
@@ -707,7 +710,7 @@ local function pset(x, y, c)
 end
 
 local function pget(x, y) -- use `scan_surface() first!`
-  local data = _D.surf_data[_D.screen]
+  local data = _D.surf_data[_D.target]
   
   if not data then return 0 end
   
@@ -896,14 +899,14 @@ local function scan_surface(key)
 end
 
 
-local function surfshot(surf_key, scale, file_name)
+local function surfshot_data(surf_key, scale)
   local surf = _D.surf_list[surf_key or _D.screen]
   if not surf then
     sugar.debug.r_log("Attempt to use 'surfshot(...)' on inexistent surface '"..surf_key.."'.")
   end
 
   local w, h = surf:getDimensions()
-  local shot = love.graphics.newCanvas(w * scale, h * scale)
+  local shot = love.graphics.newCanvas(w * scale, h * scale, {dpiscale = 1})
   
   local active_canvas = love.graphics.getCanvas()
   
@@ -919,7 +922,15 @@ local function surfshot(surf_key, scale, file_name)
   love.graphics.setCanvas(active_canvas)
   love.graphics.translate(-_flr(_D.cam_x), -_flr(_D.cam_y))
   
-  shot:newImageData():encode("png", file_name)
+  return shot:newImageData()
+end
+
+local function surfshot(surf_key, scale, file_name)
+  local data = surfshot_data(surf_key, scale)
+  
+  if data then
+    data:encode("png", file_name)
+  end
 end
 
 
@@ -1190,6 +1201,7 @@ local gfx = {
   scan_surface                   = scan_surface,
   
   surfshot                       = surfshot,
+  surfshot_data                  = surfshot_data,
   
   palettes                       = palettes
 }

@@ -1,8 +1,0 @@
-main: main.lua
-title: Manaficator
-owner: spaceling
-primaryColor: 430067
-coverImage: https://raw.githubusercontent.com/EliottmacR/manaficator/master/manaficator.png
-dimensions: full
-description: Combine skills and create spells to vanquish scientists and conquere the leaderboard.
-

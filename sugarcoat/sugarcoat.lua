@@ -23,8 +23,9 @@ sugar.S = {}
 
 local events = require("sugarcoat/sugar_events")
 
-local active_canvas
+local active_canvas, active_color
 local old_love = love
+local set_love = setmetatable({}, {__index = old_love})
 
 local _debug = debug
 
@@ -33,6 +34,7 @@ local function arrange_call(v, before, after)
     -- wrap before
     if active_canvas then
       old_love.graphics.setCanvas(active_canvas)
+      old_love.graphics.setColor(active_color or {1, 1, 1, 1})
     end
     
     if before then before(...) end
@@ -46,13 +48,14 @@ local function arrange_call(v, before, after)
     
     if after then after(...) end
     
+    active_color = {old_love.graphics.getColor()}
     active_canvas = old_love.graphics.getCanvas()
     old_love.graphics.setCanvas()
     
     if r[1] then
       return r[2]
     else
-      r_log(r[2])
+      sugar.debug.r_log(r[2])
       error(r[2], 0)
     end
   end
@@ -77,7 +80,7 @@ if SUGAR_SERVER_MODE then
       if r[1] then
         return r[2]
       else
-        r_log(r[2])
+        sugar.debug.r_log(r[2])
         error(r[2], 0)
       end
     end
@@ -85,7 +88,7 @@ if SUGAR_SERVER_MODE then
 end
 
 love = setmetatable({}, {
-  __index = old_love,
+  __index = set_love,
   __newindex = function(t, k, v)
     if type(v) == "function" or v == nil then
       if k == "draw" and not SUGAR_SERVER_MODE then
@@ -100,8 +103,11 @@ love = setmetatable({}, {
       else
         old_love[k] = arrange_call(v)
       end
+      
+      set_love[k] = v
     else
       old_love[k] = v
+      set_love[k] = v
     end
   end
 })
@@ -126,8 +132,10 @@ end
 local _castle_prev_exist
 if castle then
   local old_castle = castle
+  local set_castle = setmetatable({}, {__index = old_castle})
+  
   castle = setmetatable({}, {
-    __index = old_castle,
+    __index = set_castle,
     __newindex = function(t, k, v)
       if type(v) == "function" or v == nil then
         if k == "backgroundupdate" then
@@ -135,8 +143,11 @@ if castle then
         else
           old_castle[k] = arrange_call(v)
         end
+        
+        set_castle[k] = v
       else
         old_castle[k] = v
+        set_castle[k] = v
       end
     end
   })
@@ -182,7 +193,7 @@ love.quit = quit
 events.quit = quit
 
 
-if castle then
+if castle and not SUGAR_SERVER_MODE then
   local canvas
   function network.paused()
     canvas = love.graphics.getCanvas()
