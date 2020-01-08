@@ -1,6 +1,6 @@
+require("game/world/world")
 require("game/player")
 require("game/enemy")
-require("game/pit")
 require("game/hud")
 require("game/items") 
 
@@ -21,8 +21,8 @@ function init_game()
   
   state = "intro"
   
+  init_world()
   init_items()
-  init_pit()
   init_player()
   
   cam = { x = 0, 
@@ -31,8 +31,8 @@ function init_game()
 end
 
 function update_game()
-  
-  if update_pit then update_pit() end
+
+  update_world()
   
   update_enemies()
   update_player()
@@ -61,7 +61,7 @@ function draw_game()
   cls(background_clr)
   
   camera(cam.x, cam.y)
-    draw_pit()
+    draw_world()
     draw_enemies()
     draw_projectiles()
     draw_player()

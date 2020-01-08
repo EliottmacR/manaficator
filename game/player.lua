@@ -27,11 +27,11 @@ function init_player()
   player.y = world.y + (world.h-player.h)/2
   
   
-  player.inventory = {
-    "winged_boots",
-    "winged_crown",
-    "speed_pills",
-  }
+  -- player.inventory = {
+    -- winged_boots,
+  -- }
+  
+  player.inventory = get_all_items()
   
   player.shot = t()
 

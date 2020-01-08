@@ -12,10 +12,6 @@ function mouse_in_rect( x1, y1, x2, y2, mx, my)
   return mx > x1 and mx < x2 and my > y1 and my < y2
 end
 
-function point_in_rect(x, y, x1, y1, x2, y2)
-  return x > x1 and x < x2 and y > y1 and y < y2
-end
-
 function chance(x) -- x gotta be between between 1 and 100 (both in)
   if x > 100 or x < 0 then return end
   return (rnd(100) <= x)
@@ -32,8 +28,8 @@ function easeInOut (timer, value_a, value_b, duration)
  	return -value_b/2 * (timer*(timer-2) - 1) + value_a
 end
 
-function point_in_rect(x, y, x1, y1, x2, y2)
-  return x > x1 and x < x2 and y > y1 and y < y2
+function point_in_rect(px, py, x, y, w, h)
+  return px > x and px < x + w and py > y and py < y + h 
 end
 
 function pick_distinct( amount, from )
@@ -170,8 +166,7 @@ function dist_e2(entity1, entity2)
   return dist(x1-x2, y1-y2)
 end
 
-function nil_func()
-end
+function nil_func() end
 
 function boxSegmentIntersection(l,t,w,h, x1,y1,x2,y2)
   local dx, dy  = x2-x1, y2-y1

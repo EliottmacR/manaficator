@@ -31,6 +31,7 @@ function init_pit()
   
   current_wave = 0
   init_wave()
+  area = {update = update_pit, draw = draw_pit}
   
 end
 
@@ -72,7 +73,6 @@ function init_between_wave()
 end
 
 function update_between_wave()
-  add_log("there")
   b_w_timer = b_w_timer - dt()
   
   if b_w_timer < 0 then
@@ -94,7 +94,6 @@ end
 
 function update_wave()
   spawn_timer = spawn_timer - dt()
-  add_log(count(enemies))
   if spawn_timer < 0 then
     
     if spawn_enemy() then 
@@ -110,7 +109,7 @@ end
 ---------------------
 
 function begin_endless_wave()
-  update_pit = nil
+  update_pit = nil_func
 end
 
 

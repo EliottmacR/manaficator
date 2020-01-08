@@ -32,7 +32,11 @@ end
 
 
 
-
+function get_all_items()
+  local i_n = {}
+  for _, item in pairs(items) do add(i_n, item.name) end
+  return i_n
+end
 
 
 

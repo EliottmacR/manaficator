@@ -13,7 +13,7 @@ end
 
 function draw_hud()
 
-  if time_began_display_wave > t() - DISPLAY_WAVE_TIME then 
+  if time_began_display_wave and time_began_display_wave > t() - DISPLAY_WAVE_TIME then 
     local str = "Wave " .. (displayed_wave or 1)
     use_font("32")
     c_cool_print(str, GW/2, GH/3 + 4*cos(t()))
