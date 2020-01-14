@@ -7,6 +7,8 @@ wands.lazershot = {
   
   projectile_type = "ranged_laser",
 
+  price = 1,
+  
   firing_speed = .8,
   
   can_shoot = function(player)

@@ -7,6 +7,8 @@ wands.meteor_wand = {
   
   projectile_type = "meteor",
 
+  price = 1,
+  
   firing_speed = .2,
   
   can_shoot = function(player)

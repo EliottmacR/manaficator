@@ -9,6 +9,8 @@ wands.start_wand = {
 
   firing_speed = .2,
   
+  price = 1,
+  
   can_shoot = function(player)
     return player.shot + get_firing_speed(player) < t()
   end,

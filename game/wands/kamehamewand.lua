@@ -9,6 +9,8 @@ wands.laser_wand = {
   
   firing_speed = 1.5,
   
+  price = 1,
+  
   -- activated = false,
   
   can_shoot = function(player)

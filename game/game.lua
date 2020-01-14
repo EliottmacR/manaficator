@@ -21,12 +21,15 @@ function init_game()
   
   state = "intro"
   
+  
   init_world()
   init_items()
   init_player()
   
   cam = { x = 0, 
           y = 0}
+          
+  init_hud()
 
 end
 
@@ -38,6 +41,8 @@ function update_game()
   update_player()
   update_projectiles()
   update_camera()
+  
+  update_hud()
   
 end
 
@@ -89,12 +94,14 @@ function init_controls()
   
   register_btn("space", 0,  input_id("keyboard", "space"))
   
-  register_btn("shoot", 0, {input_id("mouse_button", "lb"),  input_id("mouse_button", "rb")})
+  register_btn("shoot" , 0, {input_id("mouse_button", "lb"),  input_id("mouse_button", "rb")})
+  register_btn("select", 0,  input_id("mouse_button", "lb"))
+  register_btn("back"  , 0,  input_id("mouse_button", "rb"))
   
   register_btn("mouse_x", 0, input_id("mouse_position", "x"))
   register_btn("mouse_y", 0, input_id("mouse_position", "y"))
   
-  -- register_btn(11, 0, input_id("mouse_button", "scroll_y"))
+
 end
 
 function init_fonts()

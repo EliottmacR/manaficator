@@ -69,33 +69,36 @@ function update_player()
   
   local acceleration = 800 * dt()
   
-  if btn("up") then 
-    p.v.y = p.v.y - acceleration * dt()
-  end                                  
-                                       
-  if btn("right") then                 
-    p.v.x = p.v.x + acceleration * dt()
-  end                                  
-                                       
-  if btn("down") then                  
-    p.v.y = p.v.y + acceleration * dt()
-  end                                  
-                                       
-  if btn("left") then                  
-    p.v.x = p.v.x - acceleration * dt()
-  end
-  
-  if btnp("space") then
-    if not p.dash_began then
-      p.dash_began = t()
-    end 
-  end
-  
-  if btn("shoot") then 
-    if can_shoot(player) then 
-      p.shot = t() 
-      shoot(p) 
-    end 
+  if not SHOWING_MENU() then 
+  -- if true then 
+    if btn("up") then 
+      p.v.y = p.v.y - acceleration * dt()
+    end                                  
+                                         
+    if btn("right") then                 
+      p.v.x = p.v.x + acceleration * dt()
+    end                                  
+                                         
+    if btn("down") then                  
+      p.v.y = p.v.y + acceleration * dt()
+    end                                  
+                                         
+    if btn("left") then                  
+      p.v.x = p.v.x - acceleration * dt()
+    end
+    
+    if btnp("space") then
+      if not p.dash_began then
+        p.dash_began = t()
+      end 
+    end
+    
+    if btn("shoot") then 
+      if can_shoot(player) then 
+        p.shot = t() 
+        shoot(p) 
+      end 
+    end
   end
   
   -- wand_update()

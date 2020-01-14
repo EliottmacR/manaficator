@@ -6,6 +6,8 @@ function init_items()
   items.winged_boots = {
     name = "Winged boots", 
     
+    price = 10, 
+    
     effect = function ()
       player.buffs.movement_speed = (player.buffs.movement_speed or 1) * 1.5
     end,
@@ -13,6 +15,8 @@ function init_items()
   
   items.winged_crown = {
     name = "Winged crown", 
+    
+    price = 10, 
     
     effect = function ()
       player.buffs.movement_speed = (player.buffs.movement_speed or 1) * 1.5
@@ -22,6 +26,8 @@ function init_items()
   items.speed_pills = {
     name = "Speed pills", 
     
+    price = 10, 
+      
     effect = function ()
       player.buffs.firing_speed = (player.firing_speed_buff or 1) * 1.5
       player.buffs.projectile_speed = (player.firing_speed_buff or 1) * 1.5
