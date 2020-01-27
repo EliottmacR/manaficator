@@ -19,6 +19,8 @@ function init_game()
   -- coins = castle.storage.get("coins")
   -- infos = castle.storage.get("infos") or {}
   
+  load_png("spr_sheet", "assets/spr_sheet.png", nil, true) 
+  spritesheet_grid (16, 16)
   state = "intro"
   
   
@@ -108,6 +110,7 @@ function init_fonts()
   
   load_font("sugarcoat/TeapotPro.ttf", 44, "44", false)
   load_font("sugarcoat/TeapotPro.ttf", 32, "32", false)
+  load_font("sugarcoat/TeapotPro.ttf", 24, "24", true)
   load_font("sugarcoat/TeapotPro.ttf", 16, "16", true)
   
 end

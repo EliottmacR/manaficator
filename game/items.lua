@@ -6,6 +6,8 @@ function init_items()
   items.winged_boots = {
     name = "Winged boots", 
     
+    desc = "What ? Yes, they belonged to Hermes!", 
+    
     price = 10, 
     
     effect = function ()
@@ -16,6 +18,8 @@ function init_items()
   items.winged_crown = {
     name = "Winged crown", 
     
+    desc = "Yes yes, this too.", 
+    
     price = 10, 
     
     effect = function ()
@@ -25,6 +29,8 @@ function init_items()
   
   items.speed_pills = {
     name = "Speed pills", 
+    
+    desc = "Random but very fast pills.", 
     
     price = 10, 
       

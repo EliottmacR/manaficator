@@ -8,27 +8,29 @@ function init_palette()
   _sugar_palette = {}
   _palette = {}
   
-  add_color(0x000000, "pblack"     )
+  add_color(0x000000, "pblack" )
   
-  add_color(0x16171a, "black"      )
-  add_color(0x7f0622, "red"        )
-  add_color(0xd62411, "dorange"    )
-  add_color(0xff8426, "orange"     )  
-  add_color(0xffd100, "yellow"     )
+  add_color(0x16171a, "black"  )
+  add_color(0x7f0622, "red"    )
+  add_color(0xd62411, "dorange")
+  add_color(0xff8426, "orange" )  
+  add_color(0xffd100, "yellow" )
   
-  add_color(0xfafdff, "white"      )
-  add_color(0xff80a4, "ppink"      )
-  add_color(0xff2674, "pink"       )
-  add_color(0x94216a, "purple"     )
-  add_color(0x430067, "dblue"      )
+  add_color(0xfafdff, "white"  )
+  add_color(0xff80a4, "ppink"  )
+  add_color(0xff2674, "pink"   )
+  add_color(0x94216a, "purple" )
+  add_color(0x430067, "dblue"  )
   
-  add_color(0x234975, "ablue"     )
-  add_color(0x68aed4, "lblue"     )
-  add_color(0xbfff3c, "agreen"    )
-  add_color(0x10d275, "green"     )
-  add_color(0x007899, "blue"      )
+  add_color(0x234975, "ablue"  )
+  add_color(0x68aed4, "lblue"  )
+  add_color(0xbfff3c, "agreen" )
+  add_color(0x10d275, "green"  )
+  add_color(0x007899, "blue"   )
   
-  add_color(0x002859, "ddblue"     )
+  add_color(0x002859, "ddblue" )
+  
+  add_color(0x922317, "dred"   ) 
   
   
   use_palette(_sugar_palette)

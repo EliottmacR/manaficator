@@ -33,22 +33,22 @@ function get_init_position(e)
   
   if way == 0 then
     -- top
-    y = - get_t(e).h - irnd(16)
+    y = - get_t(e).h - irnd(16) - 32
     x = irnd(world.w)
   elseif way == 1 then
     -- right
     
-    x = world.w + irnd(16)
+    x = world.w + irnd(16) + 32
     y = irnd(world.h)
   
   elseif way == 2 then
     -- bottom
-    y = world.h + irnd(16)
+    y = world.h + irnd(16) + 32
     x = irnd(world.w)
   
   else -- way == 3
     -- left
-    x = - get_t(e).w - irnd(16)
+    x = - get_t(e).w - irnd(16) - 32
     y = irnd(world.h)
   end
   return x, y
@@ -183,8 +183,12 @@ e_template.enemy1 = {
   end,
   
   draw = function(e)
-    local col = (e.last_hit + get_a(e).recovery_time > t()) and _p_n("green") or _p_n("purple")
-    rctf(e.x, e.y, get_t(e).w, get_t(e).h, col)
+    local flash = (e.last_hit + get_a(e).recovery_time > t())
+    local a = e.angle
+    local s = flr(t()%2) 
+    local fx = (a > -1/4 and a < 1/4)
+    spr( 2, e.x, e.y + 4)
+    outlined( 8*2 + s, e.x, e.y, 1, 1, fx, flash and _p_n("white"))
   end,
   
 }

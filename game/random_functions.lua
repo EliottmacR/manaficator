@@ -87,6 +87,36 @@ function print_log(x, y)
   end
 end
 
+function c_cool_print_w_limited(str, x, y, w, inner_col, outer_col)
+
+  -- local str_w = str_width(str)
+  -- local str_h = str_height(str)
+  
+  -- local words = {}
+  -- local word = ""
+  
+  -- for i = 1, #str do
+    -- if str[i] ~= " " then 
+      -- word = word .. str[i]
+    -- else 
+      -- add(words, word) 
+      -- word = {}
+    -- end
+  -- end
+  
+  -- if #word ~= 0 then add(words, word) end
+  
+  
+  -- count length and add words to line
+  
+  -- if line > w, del the last word and put it into the new line.
+  
+  -- continue while #str > 0
+  
+  cool_print(str, x - str_w/2, y - str_h/2, inner_col, outer_col )
+  
+end
+
 function c_cool_print(str, x, y, inner_col, outer_col)
 
   local w = str_width(str)
@@ -206,6 +236,30 @@ function boxSegmentIntersection(l,t,w,h, x1,y1,x2,y2)
 end
 
 
+function outlined(sp, x, y, w, h, fx, flash)
+  if not sp or not x or not y then return end
+  
+  local w = w or 1
+  local h = h or 1
+  
+  all_colors_to(flash or _p_n("black"))
+  spr(sp, x - 1, y - 1, w, h, fx) 
+  spr(sp, x - 1, y,     w, h, fx) 
+  spr(sp, x - 1, y + 1, w, h, fx) 
+  
+  spr(sp, x,     y - 1, w, h, fx) 
+  spr(sp, x,     y + 1, w, h, fx) 
+  
+  spr(sp, x + 1, y - 1, w, h, fx) 
+  spr(sp, x + 1, y,     w, h, fx) 
+  spr(sp, x + 1, y + 1, w, h, fx) 
+  
+  
+  all_colors_to(flash)
+  spr(sp, x, y, w, h, fx) 
+  if flash then all_colors_to() end
+  
+end
 
 
 

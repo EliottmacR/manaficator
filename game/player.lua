@@ -150,9 +150,14 @@ end
 
 function draw_player()
 
-  rctf(player.x, player.y, player.w, player.h, _p_n("yellow"))
+  -- rctf(player.x, player.y, player.w, player.h, _p_n("yellow"))
   
   local a = get_look_angle_player()
+  local s = flr(t()%2) 
+  local fx = (a > -1/4 and a < 1/4) 
+  
+  spr( 2, player.x, player.y + 4)
+  outlined( s, player.x, player.y, 1, 1, fx)
   
   -- line(player.x + player.w/2, player.y + player.h/2, player.x + player.w/2 + cos(a) * 32, player.y + player.h/2 + sin(a) * 32, _p_n("yellow"))
 

@@ -45,41 +45,61 @@ end
 
 function draw_start_area()
 
-  rctf( -32,  -32, world.w + 32*2, world.h + 32*2, _p_n("dorange")) 
-  rctf(   0,    0,        world.w, world.h, _p_n("agreen"))
-  
-  for j = 1, world.h/32-2 do
-    for i = 1, world.w/32-2 do
-      local col = ((i + j%2) % 2 == 0 ) and _p_n("dorange") or _p_n("agreen")
-      rctf( (i) * 32,  (j) * 32, 32, 32, col) 
-    end
-  end
-  
-  rctf(to_pit_zone.x, to_pit_zone.y, to_pit_zone.w, to_pit_zone.h, _p_n("ppink"))
-  
-  rctf(to_shop_zone.x, to_shop_zone.y, to_shop_zone.w, to_shop_zone.h, hover_shop and _p_n("pink") or _p_n("ppink"))
 
+  draw_walls()
+  draw_floor()
+  
+ 
 end
 
+function draw_floor ()
+  rctf(0, 0, world.w ,world.h, _p_n("black"))
+end
+
+function draw_walls ()
+
+  spritesheet_grid (32, 32)
+  
+  local s
+  local ww = flr(world.w/32) + 1
+  local wh = flr(world.h/32) + 1
+  
+  -- outer layer
+  spr( 12, -64, -64) -- corner tl 
+  for i = -1, ww - 1 do spr( 13, i * 32, -64) end -- top
+  spr( 14, ww*32, -64) -- corner tr
+  
+  for j = -1, wh - 1 do spr( 16, -64, j * 32) end -- left
+  
+  spr( 20, -64, wh * 32) -- corner bl 
+  for i = -1, ww - 1 do spr( 21, i * 32, wh * 32) end -- bottom
+  spr( 22, ww*32, wh * 32) -- corner br
+  
+  for j = -1, wh - 1 do spr( 18, ww * 32, j * 32) end -- right
+  
+  
+  -- inner layer
+  spr( 24, -32, -32) -- corner tl 
+  for i = 0, ww - 2 do spr( 25, i * 32, -32) end -- top
+  spr( 26, (ww-1)*32, -32) -- corner tr
+  
+  for j = 0, wh - 2 do spr( 28, -32, j * 32) end -- left
+  
+  spr( 32, -32, (wh-1) * 32) -- corner bl 
+  for i = 0, ww - 2 do spr( 33, i * 32, (wh-1) * 32) end -- bottom
+  spr( 34, (ww-1)*32, (wh-1) * 32) -- corner br
+  
+  for j = 0, wh - 2 do spr( 30, (ww-1) * 32, j * 32) end -- right
+  
+  spritesheet_grid (16, 16)
+  
+
+end
 
 function show_shop()
   SHOWING_SHOP = true
   
-  
-  -- if not items_on_sale then
-    -- items_on_sale = {{}, {}}
-    
-    -- I_O_S_CATEGORIES = { "Wands", "Accessories"}
-    
-    -- for i, w in pairs(wands) do 
-      -- add(items_on_sale[1], i)
-    -- end
-    
-    -- for i, i in pairs(items) do 
-      -- add(items_on_sale[2], i)
-    -- end  
-    
-  -- end
+  init_shop()
   
 end
 
