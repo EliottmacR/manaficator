@@ -6,8 +6,8 @@ function init_pit()
   world.x = 0
   world.y = 0
   
-  world.w = 32*17
-  world.h = 32*17
+  world.w = 32*19
+  world.h = 32*19
 
   waves = {}
   
@@ -22,7 +22,8 @@ function init_pit()
   
   local enemies = {}
   
-  enemies[e_types[1]] = { type = e_types[1], to_spawn = 50, }
+  enemies["zombie"] = { type = "zombie", to_spawn = 25, }
+  enemies["acid_cloud"] = { type = "acid_cloud", to_spawn = 25, }
   
   waves[1] = {
     enemies = enemies,
@@ -33,6 +34,15 @@ function init_pit()
   init_wave()
   area = {update = update_pit, draw = draw_pit}
   
+  
+  pit_bg = new_surface (world.w, world.h)
+  
+  target(pit_bg)
+  
+    draw_floor()
+    draw_walls()
+  
+  target()
 end
 
 function get_spawn_delay()
@@ -114,16 +124,8 @@ end
 
 
 function draw_pit()
-  
-  rctf( -32,  -32, world.w + 32*2, world.h + 32*2, _p_n("white")) 
-  rctf(   0,    0,        world.w, world.h, _p_n("black"))
-  
-  for j = 1, world.h/32-2 do
-    for i = 1, world.w/32-2 do
-      local col = ((i + j%2) % 2 == 0 ) and _p_n("white") or _p_n("black")
-      rctf( (i) * 32,  (j) * 32, 32, 32, col) 
-    end
-  end
+ 
+  spr_sheet (pit_bg, 0, 0)
 
 end
 

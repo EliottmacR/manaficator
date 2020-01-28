@@ -30,8 +30,9 @@ function init_palette()
   
   add_color(0x002859, "ddblue" )
   
-  add_color(0x922317, "dred"   ) 
+  add_color(0x922317, "brick_red" ) 
   
+  add_color(0x230b36, "dpurple" )
   
   use_palette(_sugar_palette)
   

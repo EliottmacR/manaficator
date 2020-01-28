@@ -9,10 +9,14 @@ function init_player()
     v = {
       x = 0,
       y = 0},  
-      
+    
+    ry = function() return player.y end,
+    
     max_speed = 3.6,
     dash_time = .3,
     dash_speed = 14,
+    
+    anim_t = 0,
     
     buffs = {
       movement_speed = 1,
@@ -40,7 +44,7 @@ function init_player()
     if items[id] and items[id].effect then items[id].effect() end
   end
   
-  
+  add_object_y_sort(player, draw_player)
 
   
 end
@@ -142,9 +146,11 @@ function update_player()
   end
   
   --world boundaries
-    p.x = mid(world.x, p.x, world.x + world.w - p.w)
-    p.y = mid(world.y, p.y, world.y + world.h - p.h)
+    p.x = mid(world.x + 64, p.x, world.x - 64 + world.w - p.w)
+    p.y = mid(world.y + 64 - p.h*2/3, p.y, world.y - 64 + world.h - p.h)
   --
+  
+  player.anim_t = player.anim_t + dt() * (dist(player.v.x, player.v.y) > .2 and 1 or dist(player.v.x, player.v.y) < 1 and dist(player.v.x, player.v.y) or 0)
   
 end
 
@@ -153,16 +159,23 @@ function draw_player()
   -- rctf(player.x, player.y, player.w, player.h, _p_n("yellow"))
   
   local a = get_look_angle_player()
-  local s = flr(t()%2) 
+  
+  -- local spd = dist(player.v.x, player.v.y)
+  -- add_log(spd)
+  
+  local s = flr(player.anim_t * 10)%2
   local fx = (a > -1/4 and a < 1/4) 
   
-  spr( 2, player.x, player.y + 4)
+  -- spr( 2, player.x, player.y + 4)
   outlined( s, player.x, player.y, 1, 1, fx)
   
   -- line(player.x + player.w/2, player.y + player.h/2, player.x + player.w/2 + cos(a) * 32, player.y + player.h/2 + sin(a) * 32, _p_n("yellow"))
 
 end
 
+function draw_shadow_player()
+  spr( 2, player.x, player.y + 4)
+end
 
 
 

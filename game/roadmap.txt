@@ -157,6 +157,8 @@ if activate, hurt enemies around and make explosion
 
 
 
+enemies, quests, hud, shop, leaderboard
+
 
 
 

@@ -1,6 +1,6 @@
 require("game/world/world")
 require("game/player")
-require("game/enemy")
+require("game/enemies/_enemies")
 require("game/hud")
 require("game/items") 
 
@@ -69,9 +69,9 @@ function draw_game()
   
   camera(cam.x, cam.y)
     draw_world()
-    draw_enemies()
     draw_projectiles()
-    draw_player()
+    draw_shadows()
+    y_sort_draw() 
   camera()
   
   draw_hud()
@@ -79,6 +79,11 @@ function draw_game()
   use_font("16")
   print_log()
   
+end
+
+function draw_shadows()
+  draw_shadow_player()
+  draw_shadow_enemies()
 end
 
 function init_controls()
