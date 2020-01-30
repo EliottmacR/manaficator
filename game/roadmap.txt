@@ -159,6 +159,87 @@ if activate, hurt enemies around and make explosion
 
 enemies, quests, hud, shop, leaderboard
 
+---------------
+
+01/29
+
+add more enemies
+
+add the quest system
+
+add an hud for player health, score and wave infos
+
+make shop pretty, make it use coins and make it unlock things
+
+make closet to change weapon and 3 additional items
+
+make it so enemies give points at death
+
+load and save leaderboard
+
+
+
+
+
+--------------------------- QUEST SYSTEM -----------------------
+
+
+have multiple triggers.
+
+have a table with an event and a function that changes some data for achievement tracking
+
+
+
+example : when enemie dies, sends "acid_cloud_died" to achievementator()
+
+achievementator gets this specific signal and triggers a function linked to that signal.
+
+the function adds the signal received to the data already here
+
+after, some checks are made to see if achievementator launches a reward function
+
+--------------------------------------
+
+
+quest board has only 3 quests at a time
+
+other are unlocked when previous is completed
+
+player has current_quests = {["1"] = 1,["2"] = 2,["3"] = 3,}
+
+
+
+
+
+
+
+--------------------------------------
+
+function init_achievementator()
+  achievements = {}
+  
+  achievement["acid_cloud_dies"] = {  check = function()
+                                                local c = count_acid_cloud_died
+                                                c = (c or 0) + 1
+                                                
+                                                if c > 100 then reward(acid_cloud_dies) end
+                                                
+                                              end,
+                                              
+                                      reward =  function()
+                                                  player.quest["acid_cloud_dies"].status = "completed"
+                                                end,
+                                    }
+  
+end
+
+
+function get_signal_achievement(signal)
+
+  if achievementator[signal] then achievementator[signal].check() end
+
+end
+
 
 
 

@@ -236,6 +236,12 @@ function boxSegmentIntersection(l,t,w,h, x1,y1,x2,y2)
   return true
 end
 
+function box_collide(x1, y1, w1, h1, x2, y2, w2, h2)
+  return x1 < x2+w2 and
+         x2 < x1+w1 and
+         y1 < y2+h2 and
+         y2 < y1+h1
+end
 
 function outlined(sp, x, y, w, h, fx, flash)
   if not sp or not x or not y then return end
@@ -261,8 +267,33 @@ function outlined(sp, x, y, w, h, fx, flash)
   if flash then all_colors_to() end
   
 end
-
-
+-- (3, player.x + player.w/2, player.y + player.h/2, get_look_angle_player() + .25, 1, 1, .5, .5) 
+function a_outlined(sp, x, y, a, w, h, anchor_x, anchor_y, outline_color, from_to)
+  if not sp or not x or not y then return end
+  
+  all_colors_to(outline_color or _p_n("black"))
+  
+  aspr(sp, x - 1, y - 1, a, w, h, anchor_x, anchor_y) 
+  aspr(sp, x - 1, y,     a, w, h, anchor_x, anchor_y)    
+  aspr(sp, x - 1, y + 1, a, w, h, anchor_x, anchor_y) 
+  
+  aspr(sp, x,     y - 1, a, w, h, anchor_x, anchor_y) 
+  aspr(sp, x,     y + 1, a, w, h, anchor_x, anchor_y) 
+  
+  aspr(sp, x + 1, y - 1, a, w, h, anchor_x, anchor_y) 
+  aspr(sp, x + 1, y,     a, w, h, anchor_x, anchor_y) 
+  aspr(sp, x + 1, y + 1, a, w, h, anchor_x, anchor_y) 
+  
+  all_colors_to()
+  
+  for i, swap in pairs(from_to) do
+    pal (swap[1],swap[2])
+  end
+  
+  aspr(sp, x, y , a, w, h, anchor_x, anchor_y) 
+  pal()
+  
+end
 
 
 function collide_objobj(obj1, obj2)
@@ -290,7 +321,6 @@ _o = {} --_objects_to_draw
 
 
 function add_object_y_sort(object, draw_func, y_offset)
-
   add(_o, {o = object, draw = draw_func, y_o = y_offset or 0})
 end
 
@@ -317,6 +347,12 @@ function y_sort_draw()
     obj.draw(obj.o)
   end
   -- end
+end
+
+function remove_from_y_draw(e)
+  for i, ob in pairs(_o) do
+    if ob.o.eid and ob.o.eid == e.eid then del_at(_o, i) end
+  end
 end
 
 --

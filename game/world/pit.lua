@@ -22,7 +22,7 @@ function init_pit()
   
   local enemies = {}
   
-  enemies["zombie"] = { type = "zombie", to_spawn = 25, }
+  -- enemies["zombie"] = { type = "zombie", to_spawn = 25, }
   enemies["acid_cloud"] = { type = "acid_cloud", to_spawn = 25, }
   
   waves[1] = {

@@ -12,6 +12,7 @@ e_template.zombie = {
     dmg = 1,
     recovery_time = .1,
     collide = true,
+    y_sort = true,
   },
   
   init = function()
@@ -24,6 +25,8 @@ e_template.zombie = {
       speed = 0,
       buffs = {},
       ry = function(e) return e.y + 4 end,
+      w = function (e) return get_t(e).w end,
+      h = function (e) return get_t(e).h end,
     }
     
     e.x, e.y = get_init_position(e)
@@ -43,7 +46,7 @@ e_template.zombie = {
     
     -- every frame, get closer from the player
     
-    if e.hp < 0 then enemies[e.eid] = nil end
+    if e.hp < 0 then kill_enemy(e) end
     
     local target = player
     
@@ -74,9 +77,13 @@ e_template.zombie = {
       e.y = e.y + sgn(e.y - enemy.y) * acc * 0.5
     end
     
+    if box_collide(player.x, player.y, player.w, player.w, e.x, e.y, e:w(), e:h()) then
+      hurt_player(1)
+    end
+    
     --world boundaries
-      e.x = mid(world.x + 64, e.x, world.x + world.w - get_t(e).w - 64)
-      e.y = mid(world.y + 64, e.y, world.y + world.h - get_t(e).h - 64)
+      e.x = mid(world.x + 64, e.x, world.x + world.w - e:w() - 64)
+      e.y = mid(world.y + 64, e.y, world.y + world.h - e:h() - 64)
     --
     
   end,
@@ -85,7 +92,6 @@ e_template.zombie = {
     if e.last_hit + get_a(e).recovery_time < t() then
       e.last_hit = t()
       e.hp = e.hp - (dmg or 0)
-      
     end
   end,
   

@@ -18,19 +18,22 @@ do -- find all the enemies
   
 end
 
-function new_enemy(e_type)
+function new_enemy(e_type, params)
   if not e_template[e_type] then return end
   
   local e_t = e_template[e_type]
  
-  local e = e_t.init()
+  local e = e_t.init(params)
+  if not e then return end
+  
   eid = eid + 1
   
   e.eid = eid
   enemies[e.eid] = e
-    
-  add_object_y_sort(enemies[e.eid], get_t(enemies[e.eid]).draw)
   
+  if get_a(e).y_sort then add_object_y_sort(enemies[e.eid], get_t(enemies[e.eid]).draw) end
+  
+  return eid
 end
 
 function update_enemies()
@@ -39,6 +42,11 @@ end
 
 function draw_shadow_enemies()
   for _, e in pairs(enemies) do e_template[e.id].draw_shadow(e) end
+end
+
+function kill_enemy(e)
+  enemies[e.eid] = nil
+  if get_a(e).y_sort then remove_from_y_draw(e) end
 end
 
 

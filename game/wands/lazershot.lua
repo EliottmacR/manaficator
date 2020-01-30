@@ -9,7 +9,7 @@ wands.lazershot = {
 
   price = 1,
   
-  firing_speed = .8,
+  firing_speed = .2,
   
   can_shoot = function(player)
     return player.shot + get_firing_speed(player) < t()

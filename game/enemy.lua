@@ -11,7 +11,7 @@ function new_enemy(e_type)
   
   e.eid = eid
   enemies[e.eid] = e
-  
+  return e
 end
 
 function update_enemies()

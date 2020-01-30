@@ -210,6 +210,25 @@ function draw_shop()
   spr_sheet(shop_surf, s.x, s.y)
 end
 
+cursor_c = 1
+timer_cursor = .1
+
+function draw_cursor()
+
+  spritesheet_grid (32, 32)
+  timer_cursor = timer_cursor - dt()
+  
+  if timer_cursor < 0 then
+    timer_cursor = .1
+    cursor_c = random_c()
+  end
+  
+  a_outlined(3, player.x + player.w/2, player.y + player.h/2, get_look_angle_player() + .5*3/4, 1, 1, .5, .5, _p_n("black"), {{_p_n("pink"), cursor_c}}) 
+  
+  pal ( )
+  spritesheet_grid (16, 16)
+end
+
 
 
 

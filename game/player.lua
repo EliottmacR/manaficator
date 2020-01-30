@@ -16,12 +16,18 @@ function init_player()
     dash_time = .3,
     dash_speed = 14,
     
+    life = 5,
+    
+    until_recovery = 0,
+    recovery_time = 1,
+    
     anim_t = 0,
     
     buffs = {
       movement_speed = 1,
       firing_speed = 1,
       projectile_speed = 1,
+      recovery_time = 1,
     },
     
     wand_id = "lazershot",
@@ -30,15 +36,14 @@ function init_player()
   player.x = world.x + (world.w-player.w)/2
   player.y = world.y + (world.h-player.h)/2
   
+  player.shot = t()
+
   
   -- player.inventory = {
     -- winged_boots,
   -- }
   
   player.inventory = get_all_items()
-  
-  player.shot = t()
-
   -- init player's inventory items effects
   for i, id in pairs(player.inventory) do
     if items[id] and items[id].effect then items[id].effect() end
@@ -58,8 +63,13 @@ end
 
 function get_look_angle(e)
   if e == player then return get_look_angle_player() end
+end
 
-  -- return atan2(player.v.x, player.v.y)
+function hurt_player(amount, recovery_time)
+  if player.until_recovery > 0 then return end
+  player.life = player.life - (amount or 0)
+  
+  player.until_recovery = (recovery_time or player.recovery_time) * player.buffs.recovery_time
 end
 
 function get_player_max_speed()
@@ -70,6 +80,8 @@ end
 function update_player()
 
   local p = player
+  
+  p.until_recovery = p.until_recovery - dt()
   
   local acceleration = 800 * dt()
   
@@ -150,24 +162,20 @@ function update_player()
     p.y = mid(world.y + 64 - p.h*2/3, p.y, world.y - 64 + world.h - p.h)
   --
   
-  player.anim_t = player.anim_t + dt() * (dist(player.v.x, player.v.y) > .2 and 1 or dist(player.v.x, player.v.y) < 1 and dist(player.v.x, player.v.y) or 0)
-  
+  p.anim_t = p.anim_t + dt() * (dist(p.v.x, p.v.y) > .2 and 1 or dist(p.v.x, p.v.y) < 1 and dist(p.v.x, p.v.y) or 0)
+  add_log("player life : " .. p.life)
 end
 
 function draw_player()
-
-  -- rctf(player.x, player.y, player.w, player.h, _p_n("yellow"))
   
   local a = get_look_angle_player()
   
-  -- local spd = dist(player.v.x, player.v.y)
-  -- add_log(spd)
-  
   local s = flr(player.anim_t * 10)%2
   local fx = (a > -1/4 and a < 1/4) 
-  
-  -- spr( 2, player.x, player.y + 4)
-  outlined( s, player.x, player.y, 1, 1, fx)
+
+  if player.until_recovery < 0 or flr(player.until_recovery * 10) %2 == 0  then
+    outlined( s, player.x, player.y, 1, 1, fx)
+  end
   
   -- line(player.x + player.w/2, player.y + player.h/2, player.x + player.w/2 + cos(a) * 32, player.y + player.h/2 + sin(a) * 32, _p_n("yellow"))
 

@@ -72,6 +72,7 @@ function draw_game()
     draw_projectiles()
     draw_shadows()
     y_sort_draw() 
+    draw_cursor()
   camera()
   
   draw_hud()

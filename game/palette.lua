@@ -52,6 +52,14 @@ function _p_n(name)
 	end
 end
 
+function _p_i(index)
+	return _p_n(_palette[index]) or 1
+end
+
+function random_c()
+  return _p_n(_palette[1 + irnd(#_palette-1)])
+end
+
 function all_colors_to(c)
   if c then
     for i=0,#_palette do

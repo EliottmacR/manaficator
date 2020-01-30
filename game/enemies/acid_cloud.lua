@@ -5,14 +5,14 @@ e_template.acid_cloud = {
   
   w = 16,
   h = 16,
-  
   attributes = {
-    hp = 10,
+    hp = 3,
     maxspeed = 5,
     dmg = 1,
     recovery_time = .1,
     collide = false,
     travel_d = 16*8,
+    y_sort = true,
   },
   
   init = function()
@@ -24,6 +24,7 @@ e_template.acid_cloud = {
       hp = attributes.hp,
       speed = 0,
       buffs = {},
+      pool_ids = {},
       ry = function(e) return e.y + 4 end,
     }
     
@@ -33,6 +34,9 @@ e_template.acid_cloud = {
     
     e.angle = atan2(player.x - e.x, player.y - e.y)
     e.last_hit = t() - get_a(e).recovery_time
+    
+    e.is_waiting = 0
+    e.can_spawn_pool = true
     
     return e
     
@@ -44,16 +48,20 @@ e_template.acid_cloud = {
     
     -- every frame, get closer from the player
     
-    if e.hp < 0 then enemies[e.eid] = nil end
+    if e.hp < 0 then kill_enemy(e) end
     
     local target = e.target
     
     if e.is_waiting and e.is_waiting > 0 then
       e.is_waiting = e.is_waiting - dt()
-      add_log("attack")
+      
+      if e.can_spawn_pool then
+        new_enemy("acid_pool", {parent_id = e.eid})
+        e.can_spawn_pool = false
+      end
       
     elseif not e.target then
-    
+      e.can_spawn_pool = true
       e.target = {}
       local target = e.target
       
@@ -98,7 +106,7 @@ e_template.acid_cloud = {
   draw = function(e)    
     local flash = (e.last_hit + get_a(e).recovery_time > t())  
     local a = e.angle
-    local s = flr(t()%2) 
+    local s = flr(t()%2) + (not e.target and e.spawned and e.is_waiting > 0 and 2 or 0)
     local fx = (a > -1/4 and a < 1/4)
   
     outlined( 8*4 + s, e.x, e.y, 1, 1, fx, flash and _p_n("white"))
@@ -109,10 +117,3 @@ e_template.acid_cloud = {
   end,
   
 }
-
-
-
-
-
-
-
