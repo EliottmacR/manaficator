@@ -45,6 +45,9 @@ function draw_shadow_enemies()
 end
 
 function kill_enemy(e)
+
+  send_signal( "is_dead", { e = e } )
+  
   enemies[e.eid] = nil
   if get_a(e).y_sort then remove_from_y_draw(e) end
 end

@@ -2,8 +2,8 @@ require("game/world/start_area")
 require("game/world/pit")
 
 function init_world()
-  -- init_start_area()
-  init_pit()
+  init_start_area()
+  -- init_pit()
 end
 
 function update_world()

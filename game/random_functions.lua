@@ -119,11 +119,7 @@ function c_cool_print_w_limited(str, x, y, w, inner_col, outer_col)
 end
 
 function c_cool_print(str, x, y, inner_col, outer_col)
-
-  local w = str_width(str)
-  local h = str_height(str)
-  
-  cool_print(str, x - w/2, y - h/2, inner_col, outer_col )
+  cool_print(str, x - str_width(str)/2, y - str_height(str)/2, inner_col, outer_col )
 end
 
 function cool_print(str, x, y, inner_col, outer_col)
@@ -351,7 +347,7 @@ end
 
 function remove_from_y_draw(e)
   for i, ob in pairs(_o) do
-    if ob.o.eid and ob.o.eid == e.eid then del_at(_o, i) end
+    if (ob.o.eid and ob.o.eid == e.eid) or ob.o == e then del_at(_o, i) end
   end
 end
 

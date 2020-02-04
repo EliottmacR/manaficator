@@ -151,19 +151,21 @@ function update_player()
     
     p.x = p.x + p.v.x * p.buffs.movement_speed 
     p.y = p.y + p.v.y * p.buffs.movement_speed 
-    
+      
     p.v.x = p.v.x * (1 - dt() * 6)
     p.v.y = p.v.y * (1 - dt() * 6)
-  
+    
   end
   
   --world boundaries
+  
     p.x = mid(world.x + 64, p.x, world.x - 64 + world.w - p.w)
     p.y = mid(world.y + 64 - p.h*2/3, p.y, world.y - 64 + world.h - p.h)
+  
   --
   
   p.anim_t = p.anim_t + dt() * (dist(p.v.x, p.v.y) > .2 and 1 or dist(p.v.x, p.v.y) < 1 and dist(p.v.x, p.v.y) or 0)
-  add_log("player life : " .. p.life)
+
 end
 
 function draw_player()
@@ -177,6 +179,11 @@ function draw_player()
     outlined( s, player.x, player.y, 1, 1, fx)
   end
   
+  if player.msg then
+  
+    player.msg = nil
+  
+  end
   -- line(player.x + player.w/2, player.y + player.h/2, player.x + player.w/2 + cos(a) * 32, player.y + player.h/2 + sin(a) * 32, _p_n("yellow"))
 
 end

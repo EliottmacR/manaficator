@@ -1,7 +1,10 @@
 require("game/world/world")
 require("game/player")
 require("game/enemies/_enemies")
+require("game/menus/_menus")
 require("game/hud")
+require("game/signals")
+require("game/quests")
 require("game/items") 
 
 background_clr = 0
@@ -32,7 +35,10 @@ function init_game()
           y = 0}
           
   init_hud()
-
+  
+  init_signals()
+  init_quests()
+  
 end
 
 function update_game()
@@ -72,6 +78,7 @@ function draw_game()
     draw_projectiles()
     draw_shadows()
     y_sort_draw() 
+    if area.post_draw then area.post_draw() end
     draw_cursor()
   camera()
   
@@ -101,6 +108,12 @@ function init_controls()
   
   
   register_btn("space", 0,  input_id("keyboard", "space"))
+  register_btn("quest", 0,  input_id("keyboard", "k"))
+  
+  register_btn("g", 0,  input_id("keyboard", "g"))
+  register_btn("j", 0,  input_id("keyboard", "j"))
+  register_btn("y", 0,  input_id("keyboard", "y"))
+  register_btn("h", 0,  input_id("keyboard", "h"))
   
   register_btn("shoot" , 0, {input_id("mouse_button", "lb"),  input_id("mouse_button", "rb")})
   register_btn("select", 0,  input_id("mouse_button", "lb"))

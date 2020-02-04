@@ -32,7 +32,10 @@ function init_palette()
   
   add_color(0x922317, "brick_red" ) 
   
+  add_color(0x45120c, "brown" )
+  add_color(0x45120c, "bbrown" )
   add_color(0x230b36, "dpurple" )
+  
   
   use_palette(_sugar_palette)
   

@@ -9,6 +9,11 @@ function init_pit()
   world.w = 32*19
   world.h = 32*19
 
+  if player then
+    player.x = world.w/2 - player.w/2
+    player.y = world.h/2 - player.h/2
+  end
+  
   waves = {}
   
   -- for i = 1, 5 do

@@ -22,9 +22,7 @@ you can only go out of the dungeon if you die. A bracelet gave by the shopkeaper
 to the entrance when in troubles
 
 
-
 need to feel very fast.
-
 
 
 plays the same as manaficator. Hud minimalistic and leaderboard.
@@ -239,6 +237,58 @@ function get_signal_achievement(signal)
   if achievementator[signal] then achievementator[signal].check() end
 
 end
+
+
+
+
+
+
+
+
+all things send signals
+
+current quest define what signals are taken into account
+
+have a function per signal
+
+each quest can only be completed once
+
+
+
+--------------
+
+
+function send_signal(signal, params)
+  if signals[signal] then signals[signal](params)
+end
+
+signals = {}
+
+signals.acid_cloud_is_dead = function(params)
+  
+  local c = count_acis_signals
+  
+  add_log
+
+
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
