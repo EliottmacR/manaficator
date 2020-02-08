@@ -12,9 +12,9 @@ function init_start_area()
   area = {update = update_start_area, draw = draw_start_area, post_draw = post_draw_start_area, quit = quit_start_area}
   
   to_pit_zone = {
-    x = 64,
-    y = 64,
-    w = 32,
+    x = world.w/2 - 2*16,
+    y = 32,
+    w = 32*2,
     h = 32,
   }
   
@@ -35,13 +35,20 @@ function init_start_area()
   }
   
   
-  to_quest_board_zone = {
-    x = world.w/2-16,
-    y = world.h/2-64,
-    w = 32,
-    h = 32,
-  }
+  to_quest_board_zone = {}
+    to_quest_board_zone.sprite = 25 * 8
+    to_quest_board_zone.w = 16*4
+    to_quest_board_zone.h = 16*3
+    
+    to_quest_board_zone.x = world.w - 64 - to_quest_board_zone.w - 4
+    to_quest_board_zone.y = 64 + 8 - to_quest_board_zone.h
+    to_quest_board_zone.ry = function() return to_quest_board_zone.y + to_quest_board_zone.h - 16 end 
+    
+    to_quest_board_zone.draw = function() outlined(to_quest_board_zone.sprite, to_quest_board_zone.x, to_quest_board_zone.y, 4, 3) end
+  -----------------------------
+  add_object_y_sort(to_quest_board_zone)
   
+    
   init_start_area_bg()
   
   if player then
@@ -125,14 +132,7 @@ end
 function draw_start_area()
 
   spr_sheet (start_area_bg, 0, 0)
- 
-  rctf(to_pit_zone.x, to_pit_zone.y, to_pit_zone.w, to_pit_zone.h, _p_n("pink"))
-  
-  -- draw shop zone
-  -- spr(to_shop_zone.sprite , to_shop_zone.x, to_shop_zone.y, 3, 3)
-  
-  
-  rctf(to_quest_board_zone.x, to_quest_board_zone.y, to_quest_board_zone.w, to_quest_board_zone.h, _p_n("pink"))
+  outlined(23*8 + 4, to_pit_zone.x, to_pit_zone.y , to_pit_zone.w/16, to_pit_zone.h/16)
  
 end
 
@@ -157,10 +157,17 @@ function quit_start_area()
   remove_from_y_draw(pbr)
   remove_from_y_draw(ptl)
   remove_from_y_draw(ptr)
-  pbl = nil
-  pbr = nil
-  ptl = nil
-  ptr = nil
+  
+  remove_from_y_draw(tono)
+  
+  remove_from_y_draw(sk)
+  
+  remove_from_y_draw(to_quest_board_zone)
+  
+  -- pbl = nil
+  -- pbr = nil
+  -- ptl = nil
+  -- ptr = nil
 end
 
 function draw_floor ()

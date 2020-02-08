@@ -15,8 +15,8 @@ function init_shop_menu()
   shop_w.cw = 50
   shop_w.ch = shop_w.h/4
   
-  shop_w.rw = 30
-  shop_w.rh = 50
+  shop_w.rw = 16
+  shop_w.rh = 16*3
 
 end
 
@@ -103,6 +103,10 @@ function update_shop()
   
 end
 
+
+arrow_sprite = 28 * 8 + 3
+black = true
+
 function draw_shop()
 
   local s = shop_w
@@ -120,7 +124,22 @@ function draw_shop()
   target(shop_surf)
   
   -- BACKGROUND
+   
     rctf(6, 5, s.w - 12, s.h - 12, _p_n("black"))
+    
+    local r = 1
+    
+    for i = -1, ceil(shop_w.w / r*2) + 1 do
+      for j = -1, ceil(shop_w.h / r*2) + 1 do
+      
+        local offset = r + (t()*2 % 2) * r
+        local x = r*2 * i + offset
+        local y = r*2 * j + offset
+        
+        circfill(x , y + cos(x / shop_w.w) * shop_w.w / 8, r + 5, _p_n("purple"))
+      end 
+    end
+
   --
   
   -- CATEGORIES
@@ -160,9 +179,6 @@ function draw_shop()
     local str_h = str_height(content.name)
     use_font("16")
     c_cool_print(content.desc, s.w/2, 15 + str_h * 1.5, _p_n("black"), _p_n("white")) 
-    
-    add_log(_p_n("black") or "")
-  
   
   --
   
@@ -170,10 +186,22 @@ function draw_shop()
       -- no_r_arrow = s.index == count(items_on_sale[s.choosen])
       -- no_l_arrow = s.index == 1
     -- left
-      rctf(10, s.h/2 - s.rh/2 - s.ch/4, s.rw, s.rh, (s.index == 1) and _p_n("black") or hover_l and _p_n("red") or _p_n("white"))
+      if not (s.index == 1) then
+        local col = hover_l and _p_n("red") or _p_n("white")
+        pal (_p_n("white"),col)
+        spr(arrow_sprite, 8, s.h/2 - s.rh/2 - s.ch/4, 1, 3, true)
+        pal()
+      end
     --
     -- right
-      rctf(s.w - s.rw - 10, s.h/2 - s.rh/2 - s.ch/4, s.rw, s.rh, (s.index == count(items_on_sale[s.choosen])) and _p_n("black") or  hover_r and _p_n("red") or _p_n("white"))
+      if not (s.index == count(items_on_sale[s.choosen])) then
+        local col = hover_r and _p_n("red") or _p_n("white")
+        
+        pal (_p_n("white"),col)
+        spr(arrow_sprite,s.w - s.rw - 8, s.h/2 - s.rh/2 - s.ch/4, 1, 3)
+        pal()
+      end
+      -- rctf(s.w - s.rw - 10, s.h/2 - s.rh/2 - s.ch/4, s.rw, s.rh) --,  hover_r and _p_n("red") or _p_n("white"))
     --
   
   --

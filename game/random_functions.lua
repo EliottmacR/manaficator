@@ -264,21 +264,21 @@ function outlined(sp, x, y, w, h, fx, flash)
   
 end
 -- (3, player.x + player.w/2, player.y + player.h/2, get_look_angle_player() + .25, 1, 1, .5, .5) 
-function a_outlined(sp, x, y, a, w, h, anchor_x, anchor_y, outline_color, from_to)
+function a_outlined(sp, x, y, a, w, h, anchor_x, anchor_y, outline_color, from_to, scale_x, scale_y)
   if not sp or not x or not y then return end
   
   all_colors_to(outline_color or _p_n("black"))
   
-  aspr(sp, x - 1, y - 1, a, w, h, anchor_x, anchor_y) 
-  aspr(sp, x - 1, y,     a, w, h, anchor_x, anchor_y)    
-  aspr(sp, x - 1, y + 1, a, w, h, anchor_x, anchor_y) 
+  aspr(sp, x - 1, y - 1, a, w, h, anchor_x, anchor_y, scale_x or 0, scale_y or 0) 
+  aspr(sp, x - 1, y,     a, w, h, anchor_x, anchor_y, scale_x or 0, scale_y or 0)    
+  aspr(sp, x - 1, y + 1, a, w, h, anchor_x, anchor_y, scale_x or 0, scale_y or 0) 
   
-  aspr(sp, x,     y - 1, a, w, h, anchor_x, anchor_y) 
-  aspr(sp, x,     y + 1, a, w, h, anchor_x, anchor_y) 
+  aspr(sp, x,     y - 1, a, w, h, anchor_x, anchor_y, scale_x or 0, scale_y or 0) 
+  aspr(sp, x,     y + 1, a, w, h, anchor_x, anchor_y, scale_x or 0, scale_y or 0) 
   
-  aspr(sp, x + 1, y - 1, a, w, h, anchor_x, anchor_y) 
-  aspr(sp, x + 1, y,     a, w, h, anchor_x, anchor_y) 
-  aspr(sp, x + 1, y + 1, a, w, h, anchor_x, anchor_y) 
+  aspr(sp, x + 1, y - 1, a, w, h, anchor_x, anchor_y, scale_x or 0, scale_y or 0) 
+  aspr(sp, x + 1, y,     a, w, h, anchor_x, anchor_y, scale_x or 0, scale_y or 0) 
+  aspr(sp, x + 1, y + 1, a, w, h, anchor_x, anchor_y, scale_x or 0, scale_y or 0) 
   
   all_colors_to()
   
@@ -317,7 +317,8 @@ _o = {} --_objects_to_draw
 
 
 function add_object_y_sort(object, draw_func, y_offset)
-  add(_o, {o = object, draw = draw_func, y_o = y_offset or 0})
+  if not object then return end
+  add(_o, {o = object, draw = object.draw or draw_func, y_o = object.y_offset or y_offset or 0})
 end
 
 function y_sort_draw()

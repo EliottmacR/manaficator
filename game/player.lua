@@ -17,6 +17,7 @@ function init_player()
     dash_speed = 14,
     
     life = 5,
+    max_life = 5,
     
     until_recovery = 0,
     recovery_time = 1,
@@ -68,7 +69,7 @@ end
 function hurt_player(amount, recovery_time)
   if player.until_recovery > 0 then return end
   player.life = player.life - (amount or 0)
-  
+
   player.until_recovery = (recovery_time or player.recovery_time) * player.buffs.recovery_time
 end
 
